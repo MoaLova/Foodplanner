@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 const App = () => {
   useEffect(() => {
     console.log('App has mounted');
   }, []);
+
+  // Funktion som anropas när en box trycks
+  const handlePress = (menuType) => {
+    Alert.alert(`You pressed ${menuType}`);
+  };
 
   return (
     <View style={styles.container}>
@@ -21,18 +26,19 @@ const App = () => {
             <Text style={styles.heading}>Foodplanner</Text>
           </View>
           <View style={styles.boxContainer}>
-            <View style={styles.box}>
+            {/* Gör boxarna till knappar */}
+            <TouchableOpacity style={styles.box} onPress={() => handlePress('Recipe')}>
               <Text style={styles.text}>Recipe</Text>
-            </View>
-            <View style={styles.box}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box} onPress={() => handlePress('Weekly Menu')}>
               <Text style={styles.text}>Weekly Menu</Text>
-            </View>
-            <View style={styles.box}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box} onPress={() => handlePress('List')}>
               <Text style={styles.text}>List</Text>
-            </View>
-            <View style={styles.box}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box} onPress={() => handlePress('Saved')}>
               <Text style={styles.text}>Saved</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ImageBackground>
@@ -83,7 +89,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'Poppins-Regular'
   },
 });
 
