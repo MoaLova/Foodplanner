@@ -1,10 +1,9 @@
-// App.js
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import WeeklyMenu from './Weeklymenu';
+import WeeklyMenu from './Weeklymenu'; // Make sure the path is correct
 
-const App = () => {
+const App = () => { 
   const [activeView, setActiveView] = useState('home'); // Håller reda på aktiv vy
 
   useEffect(() => {
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Genomskinlig bakgrund
-    justifyContent: 'flex-start', // Flytta innehållet högre upp
+    justifyContent: 'flex-start',
   },
   headerContainer: {
     padding: 20,
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
   box: {
     width: 150,
     height: 150,
-    backgroundColor: 'white', // Vita boxar
+    backgroundColor: 'white',
     borderColor: 'black',
     borderWidth: 2,
     borderRadius: 18,
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Svart text
+    color: '#000',
   },
 });
 

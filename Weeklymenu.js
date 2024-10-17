@@ -1,10 +1,37 @@
-// WeeklyMenu.js
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 const WeeklyMenu = ({ onBack }) => {
   const currentMonth = 'November';
   const dateRange = '1-7'; // Datumintervallet för den aktuella veckan
+
+  // State for selected day and meals
+  const [selectedDay, setSelectedDay] = useState(1); // Default selected day is 1
+  const [meals, setMeals] = useState({
+    1: { breakfast: '', lunch: '', dinner: '' },
+    2: { breakfast: '', lunch: '', dinner: '' },
+    3: { breakfast: '', lunch: '', dinner: '' },
+    4: { breakfast: '', lunch: '', dinner: '' },
+    5: { breakfast: '', lunch: '', dinner: '' },
+    6: { breakfast: '', lunch: '', dinner: '' },
+    7: { breakfast: '', lunch: '', dinner: '' },
+  });
+
+  // Handle day selection
+  const handleDayPress = (day) => {
+    setSelectedDay(day); // Update the selected day
+  };
+
+  // Handle meal change for selected day
+  const handleMealChange = (mealType, meal) => {
+    setMeals({
+      ...meals,
+      [selectedDay]: {
+        ...meals[selectedDay],
+        [mealType]: meal,
+      },
+    });
+  };
 
   return (
     <View style={styles.overlay}>
@@ -14,43 +41,64 @@ const WeeklyMenu = ({ onBack }) => {
         </Text>
       </View>
 
-      {/* Horisontell rad med datum */}
+      {/* Date buttons */}
       <View style={styles.dateContainer}>
         {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-          <View key={day} style={styles.dateBox}>
+          <TouchableOpacity
+            key={day}
+            onPress={() => handleDayPress(day)}
+            style={[styles.dateBox, selectedDay === day && styles.selectedDateBox]}
+          >
             <Text style={styles.dateText}>{day}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
-      {/* Vertikal layout för Frukost, Lunch och Middag */}
-      <View style={styles.mealContainer}>
-        {/* Frukost */}
-        <View style={styles.mealColumn}>
-          <Text style={styles.mealText}>Frukost</Text>
-          <View style={styles.mealBox}>
-            <Text style={styles.mealBoxText}>Ex. Gröt</Text>
+      {/* Meal selection for selected day */}
+      {selectedDay && (
+        <View style={styles.mealContainer}>
+          {/* Frukost */}
+          <View style={styles.mealColumn}>
+            <Text style={styles.mealText}>Frukost</Text>
+            <View style={styles.mealBox}>
+              <Text
+                style={styles.mealBoxText}
+                onPress={() => handleMealChange('breakfast', 'Gröt')}
+              >
+                {meals[selectedDay].breakfast || 'Ej vald'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Lunch */}
+          <View style={styles.mealColumn}>
+            <Text style={styles.mealText}>Lunch</Text>
+            <View style={styles.mealBox}>
+              <Text
+                style={styles.mealBoxText}
+                onPress={() => handleMealChange('lunch', 'Pasta')}
+              >
+                {meals[selectedDay].lunch || 'Ej vald'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Middag */}
+          <View style={styles.mealColumn}>
+            <Text style={styles.mealText}>Middag</Text>
+            <View style={styles.mealBox}>
+              <Text
+                style={styles.mealBoxText}
+                onPress={() => handleMealChange('dinner', 'Pizza')}
+              >
+                {meals[selectedDay].dinner || 'Ej vald'}
+              </Text>
+            </View>
           </View>
         </View>
+      )}
 
-        {/* Lunch */}
-        <View style={styles.mealColumn}>
-          <Text style={styles.mealText}>Lunch</Text>
-          <View style={styles.mealBox}>
-            <Text style={styles.mealBoxText}>Ex. Pasta</Text>
-          </View>
-        </View>
-
-        {/* Middag */}
-        <View style={styles.mealColumn}>
-          <Text style={styles.mealText}>Middag</Text>
-          <View style={styles.mealBox}>
-            <Text style={styles.mealBoxText}>Ex. Pizza</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Tillbaka-knapp */}
+      {/* Back button */}
       <TouchableOpacity onPress={onBack} style={styles.backButton}>
         <Text style={styles.text}>Back</Text>
       </TouchableOpacity>
@@ -62,16 +110,15 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Mörkare bakgrund för att göra texten läsbar
-    justifyContent: 'flex-start',
-    paddingTop: 40,
+    justifyContent: 'flex-start', // Flytta innehållet högre upp
   },
   headerContainer: {
-    paddingHorizontal: 20,
+    padding: 20,
+    paddingTop: 80, // Extra avstånd till toppen
     alignItems: 'center',
-    marginBottom: 20,
   },
   heading: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: 'bold',
     color: 'white',
   },
@@ -81,17 +128,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dateBox: {
-    width: 60,  // Större boxar för datum
+    width: 60,
     height: 60,
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 3,  // Tydligare outline på boxen
+    borderWidth: 3,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  selectedDateBox: {
+    backgroundColor: '#90EE90', // Färgändring för vald dag
+  },
   dateText: {
-    fontSize: 24,  // Större text och fet stil för att göra datum mer synligt
+    fontSize: 24,
     fontWeight: 'bold',
     color: 'black',
   },
@@ -112,7 +162,7 @@ const styles = StyleSheet.create({
   mealBox: {
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 6,
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
@@ -139,3 +189,8 @@ const styles = StyleSheet.create({
 });
 
 export default WeeklyMenu;
+
+
+
+
+
