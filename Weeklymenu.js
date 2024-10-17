@@ -23,16 +23,30 @@ const WeeklyMenu = ({ onBack }) => {
         ))}
       </View>
 
-      {/* Tre kolumner för Frukost, Lunch, Middag */}
+      {/* Vertikal layout för Frukost, Lunch och Middag */}
       <View style={styles.mealContainer}>
+        {/* Frukost */}
         <View style={styles.mealColumn}>
           <Text style={styles.mealText}>Frukost</Text>
+          <View style={styles.mealBox}>
+            <Text style={styles.mealBoxText}>Ex. Gröt</Text>
+          </View>
         </View>
+
+        {/* Lunch */}
         <View style={styles.mealColumn}>
           <Text style={styles.mealText}>Lunch</Text>
+          <View style={styles.mealBox}>
+            <Text style={styles.mealBoxText}>Ex. Pasta</Text>
+          </View>
         </View>
+
+        {/* Middag */}
         <View style={styles.mealColumn}>
           <Text style={styles.mealText}>Middag</Text>
+          <View style={styles.mealBox}>
+            <Text style={styles.mealBoxText}>Ex. Pizza</Text>
+          </View>
         </View>
       </View>
 
@@ -67,43 +81,51 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dateBox: {
-    width: 40,
-    height: 40,
+    width: 60,  // Större boxar för datum
+    height: 60,
     backgroundColor: 'white',
     borderColor: 'black',
-    borderWidth: 2,
+    borderWidth: 3,  // Tydligare outline på boxen
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   dateText: {
-    fontSize: 18,
+    fontSize: 24,  // Större text och fet stil för att göra datum mer synligt
     fontWeight: 'bold',
     color: 'black',
   },
   mealContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 40,
+    paddingHorizontal: 20,
+    marginTop: 30,
   },
   mealColumn: {
-    width: '30%',
-    height: 50,
+    marginBottom: 30, // Avstånd mellan Frukost, Lunch och Middag
+  },
+  mealText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  mealBox: {
     backgroundColor: 'white',
     borderColor: 'black',
     borderWidth: 2,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
   },
-  mealText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  mealBoxText: {
+    fontSize: 16,
     color: 'black',
+    fontWeight: 'bold',
   },
   backButton: {
     width: '100%',
     height: 50,
+    backgroundColor: '#90EE90', // Grön bakgrund för tillbaka-knappen
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
@@ -117,4 +139,3 @@ const styles = StyleSheet.create({
 });
 
 export default WeeklyMenu;
-
