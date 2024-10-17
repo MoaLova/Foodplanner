@@ -1,41 +1,83 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import WeeklyMenu from './Weeklymenu';
 
 const App = () => {
+  const [activeView, setActiveView] = useState('home'); // Håller reda på aktiv vy
+
   useEffect(() => {
     console.log('App has mounted');
   }, []);
 
-  return (
-    <View style={styles.background}>
-      <StatusBar style="light" />
-      <View style={styles.container}>
-        {/* Ensure text is inside Text component */}
+  // Huvudvyn (Home)
+  const renderHome = () => (
+    <View style={styles.overlay}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Foodplanner</Text>
+      </View>
+      <View style={styles.boxContainer}>
         <View style={styles.box}>
           <Text style={styles.text}>Recipe</Text>
         </View>
-        <View style={styles.box}>
+        {/* Gör Weekly Menu-boxen till en knapp */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('weeklyMenu')}
+        >
           <Text style={styles.text}>Weekly Menu</Text>
+        </TouchableOpacity>
+        <View style={styles.box}>
+          <Text style={styles.text}>List</Text>
         </View>
         <View style={styles.box}>
-          <Text style={styles.text}>Box 3</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Box 4</Text>
+          <Text style={styles.text}>Saved</Text>
         </View>
       </View>
+    </View>
+  );
+
+  // Rendera antingen huvudvyn eller veckomenyn beroende på aktiv vy
+  return (
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      {/* Bakgrundsbild */}
+      <ImageBackground
+        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }} // Bildens URL
+        style={styles.background}
+        resizeMode="cover"
+      >
+        {activeView === 'home' ? renderHome() : <WeeklyMenu onBack={() => setActiveView('home')} />}
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   background: {
     flex: 1,
-    backgroundColor: '#90EE90', // Light green color
     justifyContent: 'center',
   },
-  container: {
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Genomskinlig bakgrund
+    justifyContent: 'flex-start', // Flytta innehållet högre upp
+  },
+  headerContainer: {
+    padding: 20,
+    paddingTop: 80, // Extra avstånd till toppen
+    alignItems: 'center',
+  },
+  heading: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  boxContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
@@ -44,10 +86,10 @@ const styles = StyleSheet.create({
   box: {
     width: 150,
     height: 150,
-    backgroundColor: 'white',
+    backgroundColor: 'white', // Vita boxar
     borderColor: 'black',
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
@@ -55,9 +97,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000', // Svart text
   },
 });
 
 export default App;
-
-
