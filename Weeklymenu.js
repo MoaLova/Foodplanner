@@ -3,28 +3,39 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 const WeeklyMenu = ({ onBack }) => {
+  const currentMonth = 'November';
+  const dateRange = '1-7'; // Datumintervallet för den aktuella veckan
+
   return (
     <View style={styles.overlay}>
       <View style={styles.headerContainer}>
-        <Text style={styles.heading}>Weekly Menu</Text>
+        <Text style={styles.heading}>
+          {currentMonth} {dateRange}
+        </Text>
       </View>
-      <View style={styles.boxContainer}>
-        <View style={styles.box}>
-          <Text style={styles.text}>Monday: Pasta</Text>
+
+      {/* Horisontell rad med datum */}
+      <View style={styles.dateContainer}>
+        {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+          <View key={day} style={styles.dateBox}>
+            <Text style={styles.dateText}>{day}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Tre kolumner för Frukost, Lunch, Middag */}
+      <View style={styles.mealContainer}>
+        <View style={styles.mealColumn}>
+          <Text style={styles.mealText}>Frukost</Text>
         </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Tuesday: Salad</Text>
+        <View style={styles.mealColumn}>
+          <Text style={styles.mealText}>Lunch</Text>
         </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Wednesday: Soup</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Thursday: Pizza</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Friday: Burger</Text>
+        <View style={styles.mealColumn}>
+          <Text style={styles.mealText}>Middag</Text>
         </View>
       </View>
+
       {/* Tillbaka-knapp */}
       <TouchableOpacity onPress={onBack} style={styles.backButton}>
         <Text style={styles.text}>Back</Text>
@@ -36,50 +47,74 @@ const WeeklyMenu = ({ onBack }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Gör texten mer läsbar med mörkare bakgrund
-    justifyContent: 'flex-start', // Flytta innehållet högre upp
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Mörkare bakgrund för att göra texten läsbar
+    justifyContent: 'flex-start',
+    paddingTop: 40,
   },
   headerContainer: {
-    padding: 20,
-    paddingTop: 80, // Extra avstånd till toppen
+    paddingHorizontal: 20,
     alignItems: 'center',
+    marginBottom: 20,
   },
   heading: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: 'bold',
     color: 'white',
   },
-  boxContainer: {
+  dateContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-around',
-    padding: 20,
+    marginBottom: 20,
   },
-  box: {
-    width: 150,
-    height: 150,
-    backgroundColor: 'white', // Vita boxar
+  dateBox: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'white',
     borderColor: 'black',
     borderWidth: 2,
-    borderRadius: 18,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
   },
-  text: {
+  dateText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Svart text
+    color: 'black',
+  },
+  mealContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 40,
+  },
+  mealColumn: {
+    width: '30%',
+    height: 50,
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mealText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
   },
   backButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#90EE90', // Grön bakgrund på tillbaka-knappen
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
     borderRadius: 10,
   },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
 });
 
 export default WeeklyMenu;
+
