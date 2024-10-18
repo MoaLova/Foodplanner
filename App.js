@@ -1,36 +1,42 @@
-// App.js
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import WeeklyMenu from './Weeklymenu';
+import WeeklyMenu from './Weeklymenu'; // Make sure the file name matches
+import Recepies from './Recepies'; // Import the Recepies component
 
 const App = () => {
-  const [activeView, setActiveView] = useState('home'); // Håller reda på aktiv vy
+  const [activeView, setActiveView] = useState('home'); // Track the active view
 
   useEffect(() => {
     console.log('App has mounted');
   }, []);
 
-  // Huvudvyn (Home)
+  // Main Home View
   const renderHome = () => (
     <View style={styles.overlay}>
       <View style={styles.headerContainer}>
         <Text style={styles.heading}>Foodplanner</Text>
-      </View>
-      <View style={styles.boxContainer}>
-        <View style={styles.box}>
-          <Text style={styles.text}>Recipe</Text>
-        </View>
-        {/* Gör Weekly Menu-boxen till en knapp */}
+
+        {/* Make Recepies button */}
         <TouchableOpacity
           style={styles.box}
-          onPress={() => setActiveView('weeklyMenu')}
+          onPress={() => setActiveView('recepies')} // Set active view to 'recepies'
+        >
+          <Text style={styles.text}>Reccepies</Text>
+        </TouchableOpacity>
+
+        {/* Make Weekly Menu button */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('weeklyMenu')} // Set active view to 'weeklyMenu'
         >
           <Text style={styles.text}>Weekly Menu</Text>
         </TouchableOpacity>
+
         <View style={styles.box}>
           <Text style={styles.text}>List</Text>
         </View>
+
         <View style={styles.box}>
           <Text style={styles.text}>Saved</Text>
         </View>
@@ -38,17 +44,23 @@ const App = () => {
     </View>
   );
 
-  // Rendera antingen huvudvyn eller veckomenyn beroende på aktiv vy
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      {/* Bakgrundsbild */}
+      {/* Background image */}
       <ImageBackground
-        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }} // Bildens URL
+        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }} // URL for background image
         style={styles.background}
         resizeMode="cover"
       >
-        {activeView === 'home' ? renderHome() : <WeeklyMenu onBack={() => setActiveView('home')} />}
+        {/* Conditionally render home, weekly menu, or recepies */}
+        {activeView === 'home' ? (
+          renderHome()
+        ) : activeView === 'weeklyMenu' ? (
+          <WeeklyMenu onBack={() => setActiveView('home')} />
+        ) : (
+          <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
+        )}
       </ImageBackground>
     </View>
   );
@@ -64,12 +76,12 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Genomskinlig bakgrund
-    justifyContent: 'flex-start', // Flytta innehållet högre upp
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    justifyContent: 'flex-start', // Push content up
   },
   headerContainer: {
     padding: 20,
-    paddingTop: 80, // Extra avstånd till toppen
+    paddingTop: 80, // Extra padding at the top
     alignItems: 'center',
   },
   heading: {
@@ -77,16 +89,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  boxContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    padding: 20,
-  },
   box: {
     width: 150,
     height: 150,
-    backgroundColor: 'white', // Vita boxar
+    backgroundColor: 'white', // White boxes
     borderColor: 'black',
     borderWidth: 2,
     borderRadius: 18,
@@ -97,7 +103,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Svart text
+    color: '#000', // Black text
   },
 });
 
