@@ -2,42 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 const WeeklyMenu = ({ onBack }) => {
-  const currentMonth = 'November';
+  const currentMonth = 'January';
+  const nextMonth = 'February';
   const [weekNumber, setWeekNumber] = useState(1); // State to track the week number
-  const dateRanges = ['1-7', '8-14', '15-21', '22-28', '29-30']; // Array of week ranges
-  const dateRange = dateRanges[weekNumber - 1]; // Current date range based on the week number
+  const dateRanges = [
+    { start: 1, end: 7 },
+    { start: 8, end: 14 },
+    { start: 15, end: 21 },
+    { start: 22, end: 28 },
+    { start: 29, end: 5, carryOver: true }, // Last week carries over to the next month
+  ]; // Array of week ranges
+
+  const { start, end, carryOver } = dateRanges[weekNumber - 1]; // Get the start, end dates, and carry-over status for the current week
 
   // State for selected day and meals per week
-  const [selectedDay, setSelectedDay] = useState(1); // Default selected day is 1
+  const [selectedDay, setSelectedDay] = useState(start); // Default selected day is the first day of the week
   const [mealsPerWeek, setMealsPerWeek] = useState({
-    1: {
-      1: { breakfast: '', lunch: '', dinner: '' },
-      2: { breakfast: '', lunch: '', dinner: '' },
-      3: { breakfast: '', lunch: '', dinner: '' },
-      4: { breakfast: '', lunch: '', dinner: '' },
-      5: { breakfast: '', lunch: '', dinner: '' },
-      6: { breakfast: '', lunch: '', dinner: '' },
-      7: { breakfast: '', lunch: '', dinner: '' },
-    },
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
   });
 
   // Ensure that each week has its meal data structure initialized
   useEffect(() => {
     if (!mealsPerWeek[weekNumber]) {
+      const weekData = {};
+      for (let i = start; i <= (carryOver ? 7 : end); i++) {
+        weekData[i] = { breakfast: '', lunch: '', dinner: '' };
+      }
       setMealsPerWeek((prevMeals) => ({
         ...prevMeals,
-        [weekNumber]: {
-          1: { breakfast: '', lunch: '', dinner: '' },
-          2: { breakfast: '', lunch: '', dinner: '' },
-          3: { breakfast: '', lunch: '', dinner: '' },
-          4: { breakfast: '', lunch: '', dinner: '' },
-          5: { breakfast: '', lunch: '', dinner: '' },
-          6: { breakfast: '', lunch: '', dinner: '' },
-          7: { breakfast: '', lunch: '', dinner: '' },
-        },
+        [weekNumber]: weekData,
       }));
     }
-  }, [weekNumber, mealsPerWeek]);
+  }, [weekNumber, mealsPerWeek, start, end, carryOver]);
 
   // Handle day selection
   const handleDayPress = (day) => {
@@ -46,16 +46,7 @@ const WeeklyMenu = ({ onBack }) => {
 
   // Handle meal change for selected day and week
   const handleMealChange = (mealType, meal) => {
-    setMealsPerWeek((prevMeals) => ({
-      ...prevMeals,
-      [weekNumber]: {
-        ...prevMeals[weekNumber],
-        [selectedDay]: {
-          ...prevMeals[weekNumber][selectedDay],
-          [mealType]: meal,
-        },
-      },
-    }));
+   
   };
 
   // Handle week change
@@ -69,8 +60,8 @@ const WeeklyMenu = ({ onBack }) => {
         newWeekNumber = prevWeekNumber + 1;
       }
 
-      // Reset the selected day when switching weeks
-      setSelectedDay(1);
+      // Reset the selected day to the first day of the new week when switching weeks
+      setSelectedDay(dateRanges[newWeekNumber - 1].start);
       return newWeekNumber;
     });
   };
@@ -83,7 +74,9 @@ const WeeklyMenu = ({ onBack }) => {
         </TouchableOpacity>
 
         <Text style={styles.heading}>
-          {currentMonth} {dateRange}
+          {carryOver
+            ? `${currentMonth} ${start}-31, ${nextMonth} 01-${end}`
+            : `${currentMonth} ${start}-${end}`}
         </Text>
 
         <TouchableOpacity onPress={() => handleWeekChange('next')}>
@@ -91,18 +84,25 @@ const WeeklyMenu = ({ onBack }) => {
         </TouchableOpacity>
       </View>
 
+      {/* Dynamic date buttons based on the selected week */}
       <View style={styles.dateContainer}>
-        {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-          <TouchableOpacity
-            key={day}
-            onPress={() => handleDayPress(day)}
-            style={[styles.dateBox, selectedDay === day && styles.selectedDateBox]}
-          >
-            <Text style={styles.dateText}>{day}</Text>
-          </TouchableOpacity>
-        ))}
+        {Array.from({ length: (carryOver ? 7 : end) - start + 1 }, (_, i) => {
+          const day = start + i;
+          return (
+            <TouchableOpacity
+              key={day}
+              onPress={() => handleDayPress(day)}
+              style={[styles.dateBox, selectedDay === day && styles.selectedDateBox]}
+            >
+              <Text style={styles.dateText}>
+                {carryOver && day > 31 ? `0${day - 31}` : day}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
+      {/* Meal selection for selected day */}
       {selectedDay && mealsPerWeek[weekNumber] && (
         <View style={styles.mealContainer}>
           <View style={styles.mealColumn}>
@@ -110,9 +110,9 @@ const WeeklyMenu = ({ onBack }) => {
             <View style={styles.mealBox}>
               <Text
                 style={styles.mealBoxText}
-                onPress={() => handleMealChange('breakfast', 'Gröt')}
+                
               >
-                {mealsPerWeek[weekNumber][selectedDay].breakfast || 'Ej vald'}
+                {mealsPerWeek[weekNumber][selectedDay]?.breakfast || '+Add meal'}
               </Text>
             </View>
           </View>
@@ -122,9 +122,9 @@ const WeeklyMenu = ({ onBack }) => {
             <View style={styles.mealBox}>
               <Text
                 style={styles.mealBoxText}
-                onPress={() => handleMealChange('lunch', 'Pasta')}
+               
               >
-                {mealsPerWeek[weekNumber][selectedDay].lunch || 'Ej vald'}
+                {mealsPerWeek[weekNumber][selectedDay]?.lunch || '+Add meal'}
               </Text>
             </View>
           </View>
@@ -134,9 +134,9 @@ const WeeklyMenu = ({ onBack }) => {
             <View style={styles.mealBox}>
               <Text
                 style={styles.mealBoxText}
-                onPress={() => handleMealChange('dinner', 'Pizza')}
+               
               >
-                {mealsPerWeek[weekNumber][selectedDay].dinner || 'Ej vald'}
+                {mealsPerWeek[weekNumber][selectedDay]?.dinner || '+Add meal'}
               </Text>
             </View>
           </View>
@@ -149,7 +149,6 @@ const WeeklyMenu = ({ onBack }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   overlay: {
