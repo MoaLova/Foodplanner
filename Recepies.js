@@ -24,6 +24,11 @@ const Recepies = ({ onBack }) => {
           <View style={styles.textContainer}>
             {/* Placeholder for recipe title */}
             <Text style={styles.recipeTitle}>Recipe Title</Text>
+
+            {/* Additional information below the title */}
+            <Text style={styles.recipeInfo}>30 minutes</Text>
+            <Text style={styles.recipeInfo}>Lunch</Text>
+            <Text style={styles.recipeInfo}>Lactose-free</Text>
           </View>
         </View>
 
@@ -97,6 +102,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
+  },
+  recipeInfo: {
+    fontSize: 14,
+    color: 'black',
+    marginTop: 5, // Space between title and info texts
   },
   recipeText: {
     fontSize: 14,
