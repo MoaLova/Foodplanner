@@ -122,11 +122,13 @@ const styles = StyleSheet.create({
   button: {
     flex: 1, // Make each button equally wide
     height: 40,
-    backgroundColor: 'white', // Light blue background for buttons
+    backgroundColor: 'white', // White background for buttons
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginHorizontal: 5, // Space between buttons
+    borderWidth: 1, // Add black border
+    borderColor: '#000', // Black border color
   },
   buttonText: {
     fontSize: 16,
@@ -141,16 +143,18 @@ const styles = StyleSheet.create({
   backButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#90EE90', // Green background for back button
+    backgroundColor: 'white', // Change to white background
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginTop: 'auto', // Ensure it stays at the bottom of the content box
+    borderWidth: 1, // Add black border
+    borderColor: '#000', // Black border color
   },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#000', // Change text to black
   },
 });
 
