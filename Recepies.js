@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 const Recepies = ({ onBack }) => {
   const [description, setDescription] = useState('This is the initial description of the recipe.');
@@ -19,33 +19,33 @@ const Recepies = ({ onBack }) => {
           <View style={styles.imagePlaceholder}>
             <Text style={styles.placeholderText}>Image Placeholder</Text>
           </View>
-          
+
           {/* Text next to the image */}
           <View style={styles.textContainer}>
             {/* Placeholder for recipe title */}
             <Text style={styles.recipeTitle}>Recipe Title</Text>
-
-            {/* Placeholder for description text */}
-            <Text style={styles.recipeText}>
-              {description} {/* Dynamic text */}
-            </Text>
-
-            {/* Buttons to change description */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
-                <Text style={styles.buttonText}>Ingredients</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={changeToInstructions}>
-                <Text style={styles.buttonText}>Instructions</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Display the details based on button click */}
-            <Text style={styles.detailsText}>
-              {details} {/* Dynamic text for ingredients or instructions */}
-            </Text>
           </View>
         </View>
+
+        {/* Move description directly below the image and title */}
+        <Text style={styles.recipeText}>
+          {description} {/* Dynamic text for recipe description */}
+        </Text>
+
+        {/* Buttons to change description, now in a row */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
+            <Text style={styles.buttonText}>Ingredients</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={changeToInstructions}>
+            <Text style={styles.buttonText}>Instructions</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Display the details based on button click */}
+        <Text style={styles.detailsText}>
+          {details} {/* Dynamic text for ingredients or instructions */}
+        </Text>
 
         {/* Back button at the bottom */}
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
@@ -65,21 +65,21 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   contentBox: {
-    width: '75%',
-    height: '75%',
+    width: '95%',
+    height: '95%',
     backgroundColor: '#FFFACD', // Light yellow background (LemonChiffon)
     borderRadius: 20, // Rounded corners
     padding: 20,
-    justifyContent: 'space-between', // Place the button at the bottom
+    justifyContent: 'flex-start', // Align items from the top
   },
   recipeContainer: {
     flexDirection: 'row', // Horizontal layout for image and text
-    alignItems: 'center', // Center image and text vertically
+    alignItems: 'flex-start', // Align image and text to the start (top)
     marginTop: 20,
   },
   imagePlaceholder: {
-    width: 100, // Width of placeholder
-    height: 100, // Height of placeholder
+    width: 150, // Width of placeholder
+    height: 150, // Height of placeholder
     backgroundColor: '#D3D3D3', // Light gray background for placeholder
     borderRadius: 10, // Rounded corners
     justifyContent: 'center', // Center text in placeholder
@@ -91,27 +91,28 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   textContainer: {
-    flex: 1, // Flexible space for the text to take up remaining space
+    flex: 1, // Take up remaining space for the title
   },
   recipeTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
-    marginBottom: 10,
   },
   recipeText: {
     fontSize: 14,
     color: 'black',
-    marginBottom: 20,
+    marginTop: 10, // Space above the recipe description
   },
   buttonContainer: {
     flexDirection: 'row', // Horizontal layout for buttons
     justifyContent: 'space-between', // Distribute space between buttons
+    marginTop: 10, // Space above the button container
+    marginBottom: 10, // Space below the button container
   },
   button: {
     flex: 1, // Make each button equally wide
     height: 40,
-    backgroundColor: '#ADD8E6', // Light blue background for buttons
+    backgroundColor: 'white', // Light blue background for buttons
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -120,12 +121,12 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
   },
   detailsText: {
     fontSize: 16,
     color: 'black',
-    marginTop: 20, // Space above the details text
+    marginTop: 10, // Space above the details text
   },
   backButton: {
     width: '100%',
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    marginTop: 'auto', // Ensure it stays at the bottom of the content box
   },
   text: {
     fontSize: 18,
