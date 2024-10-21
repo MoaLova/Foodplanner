@@ -1,87 +1,88 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-const Menu = () => {
-  const [recipes, setRecipes] = useState([]); // State for recipes
-  const [loading, setLoading] = useState(true); // State for loading status
+import WeeklyMenu from './Weeklymenu'; // Correct path to your components
+import Recepies from './Recepies';
+import Menu from './Menu';  // Ensure this matches the file name and path
+
+
+const App = () => {
+  const [activeView, setActiveView] = useState('home'); // Track the active view
 
   useEffect(() => {
     console.log('App has mounted');
   }, []);
 
-  // Dummy recipe data
-  const dummyRecipes = [
-    {
-      id: 1,
-      name: 'Dummy Recipe 1',
-      image: 'https://via.placeholder.com/80', // Placeholder image
-      time: 30,
-      allergy: 'Nuts',
-      mealType: 'Lunch',
-    },
-    {
-      id: 2,
-      name: 'Dummy Recipe 2',
-      image: 'https://via.placeholder.com/80', // Placeholder image
-      time: 45,
-      allergy: 'Dairy',
-      mealType: 'Dinner',
-    },
-    {
-      id: 3,
-      name: 'Dummy Recipe 3',
-      image: 'https://via.placeholder.com/80', // Placeholder image
-      time: 20,
-      allergy: 'Gluten',
-      mealType: 'Breakfast',
-    },
-  ];
+  // Main Home View
+  const renderHome = () => (
+    <View style={styles.overlay}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Foodplanner</Text>
 
-  useEffect(() => {
-    // Simulate loading and set dummy data
-    const loadData = () => {
-      setTimeout(() => {
-        setRecipes(dummyRecipes);
-        setLoading(false);
-      }, 1000); // Simulating a delay of 1 second
-    };
+        {/* Recepies button */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('recepies')} // Set active view to 'recepies'
+        >
+          <Text style={styles.text}>Recepies</Text>
+        </TouchableOpacity>
 
-    loadData();
-  }, []);
+        {/* Weekly Menu button */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('weeklyMenu')} // Set active view to 'weeklyMenu'
+        >
+          <Text style={styles.text}>Weekly Menu</Text>
+        </TouchableOpacity>
 
-  const renderRecipeItem = ({ item }) => (
-    <View style={styles.recipeCard}>
-      <Image source={{ uri: item.image }} style={styles.recipeImage} />
-      <View style={styles.recipeInfo}>
-        <Text style={styles.recipeTitle}>{item.name}</Text>
-        <Text style={styles.recipeDetails}>{item.time} min</Text>
-        <Text style={styles.recipeDetails}>Allergy: {item.allergy}</Text>
-        <Text style={styles.recipeDetails}>Meal Type: {item.mealType}</Text>
+        {/* Menus button */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('menu')} // Set active view to 'menus'
+        >
+          <Text style={styles.text}>Menus</Text>
+        </TouchableOpacity>
+
+      
       </View>
     </View>
   );
 
+  // Conditional Rendering of the Active View
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'recepies':
+        return <Recepies />;
+      case 'weeklyMenu':
+        return <WeeklyMenu />;
+      case 'menu':
+        return <Menu />; // Ensure Menu is rendered when 'menus' is selected
+      default:
+        return renderHome(); // Default to home view
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Recepies</Text>
-      <View style={styles.searchContainer}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Sök recept..." 
-        />
-        <Button title="Filter" onPress={() => { /* Add filter logic here */ }} />
-      </View>
-
-      {loading ? (
-        <Text>Loading...</Text> // Display loading message
-      ) : (
-        <FlatList
-          data={recipes}
-          renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()} // Ensure each card has a unique key
-        />
-      )}
+      <StatusBar style="light" />
+      {/* Background image */}
+      <ImageBackground
+        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }} // URL for background image
+        style={styles.background}
+        resizeMode="cover"
+      >
+        {/* Conditionally render home, weekly menu, or recepies */}
+        {activeView === 'home' ? (
+  renderHome()
+) : activeView === 'weeklyMenu' ? (
+  <WeeklyMenu onBack={() => setActiveView('home')} />
+) : activeView === 'menu' ? ( // Add this check for the 'menu' view
+  <Menu onBack={() => setActiveView('home')} /> // Render Menu component
+) : (
+  <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
+)}
+      </ImageBackground>
     </View>
   );
 };
@@ -89,58 +90,46 @@ const Menu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    justifyContent: 'flex-start', // Push content up
+
+  },
+  headerContainer: {
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    paddingTop: 80, // Extra padding at the top
+    alignItems: 'center',
   },
   heading: {
-    fontSize: 32, // Heading size
+    fontSize: 36,
     fontWeight: 'bold',
-    color: 'black', // Heading color
-    marginBottom: 20, // Space below heading
+    color: 'white',
   },
-  searchContainer: {
-    flexDirection: 'row', // Row layout for search field and button
+  box: {
+    width: 150,
+    height: 150,
+
+    backgroundColor: 'white', // White boxes
+    borderColor: 'black',
+    borderWidth: 2,
+    borderRadius: 18,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20, // Margin below search field
+    margin: 10,
   },
-  searchInput: {
-    flex: 1, // Search field takes as much space as possible
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10, // Padding for the search input
-    marginRight: 10, // Margin to the right of the search input
-  },
-  recipeCard: {
-    flexDirection: 'row', // Layout image and text side by side
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5, // Shadow effect
-  },
-  recipeImage: {
-    width: 80, // Image width
-    height: 80, // Image height
-    borderRadius: 10,
-    marginRight: 15,
-  },
-  recipeInfo: {
-    flex: 1, // Make the info take the rest of the space
-  },
-  recipeTitle: {
+  text: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Black text color
-  },
-  recipeDetails: {
-    fontSize: 14,
-    color: '#666', // Grey text color
+    color: '#000', // Black text
+
   },
 });
 
-export default Menu;
+export default App;

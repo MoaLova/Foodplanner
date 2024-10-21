@@ -1,38 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 
-const { width } = Dimensions.get('window'); // Hämta enhetens bredd
+const { width } = Dimensions.get('window'); // Get device width
 
-const Menu = () => {
+const Menu = ({ setActiveView }) => { // Access setActiveView passed as prop to manage view change
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Dummy data för recept
+  // Dummy data for recipes
   const dummyRecipes = [
-    {
-      id: 1,
-      name: 'Dummy Recipe 1',
-      image: 'https://via.placeholder.com/80',
-      time: 30,
-      allergy: 'Nuts',
-      mealType: 'Lunch',
-    },
-    {
-      id: 2,
-      name: 'Dummy Recipe 2',
-      image: 'https://via.placeholder.com/80',
-      time: 45,
-      allergy: 'Dairy',
-      mealType: 'Dinner',
-    },
-    {
-      id: 3,
-      name: 'Dummy Recipe 3',
-      image: 'https://via.placeholder.com/80',
-      time: 20,
-      allergy: 'Gluten',
-      mealType: 'Breakfast',
-    },
+    { id: 1, name: 'Dummy Recipe 1', image: 'https://via.placeholder.com/80', time: 30, allergy: 'Nuts', mealType: 'Lunch' },
+    { id: 2, name: 'Dummy Recipe 2', image: 'https://via.placeholder.com/80', time: 45, allergy: 'Dairy', mealType: 'Dinner' },
+    { id: 3, name: 'Dummy Recipe 3', image: 'https://via.placeholder.com/80', time: 20, allergy: 'Gluten', mealType: 'Breakfast' },
   ];
 
   useEffect(() => {
@@ -42,9 +21,13 @@ const Menu = () => {
         setLoading(false);
       }, 1000);
     };
-
     loadData();
   }, []);
+
+  // Define onBack function inside Menu
+  const onBack = () => {
+    setActiveView('home');  // Assuming 'home' is the view you want to navigate to
+  };
 
   const renderRecipeItem = ({ item }) => (
     <View style={styles.recipeCard}>
@@ -60,17 +43,25 @@ const Menu = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Recepies</Text>
+      {/* Back Button */}
+      <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        <Text style={styles.text}>Back</Text>
+      </TouchableOpacity>
+      
+      <Text style={styles.heading}>Recipes</Text>
+      
       <View style={styles.searchContainer}>
         <TextInput 
           style={styles.searchInput} 
-          placeholder="Sök recept..." 
+          placeholder="Search recipes..." 
         />
-        <Button title="Filter" onPress={() => {}} />
+        <TouchableOpacity style={styles.filterButton} onPress={() => {}}>
+          <Text style={styles.buttonText}>Filter</Text>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
-        <Text>Laddar...</Text>
+        <Text>Loading...</Text>
       ) : (
         <FlatList
           data={recipes}
@@ -107,19 +98,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     marginRight: 10,
+    backgroundColor: '#fff',
+  },
+  filterButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   recipeCard: {
     flexDirection: 'row',
-    backgroundColor: 'lightgrey', // Tydlig bakgrundsfärg
+    backgroundColor: 'lightgrey',
     borderWidth: 1,
-    borderColor: 'black', // Tydlig kant
+    borderColor: 'black',
     borderRadius: 10,
     padding: 15,
     marginVertical: 10,
-    width: '100%', // Full bredd
-    height: 100, // Fasta höjd
+    width: '100%',
+    minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -127,8 +130,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   recipeImage: {
-    width: 80,
-    height: 80,
+    width: width * 0.2,
+    height: width * 0.2,
     borderRadius: 10,
     marginRight: 15,
   },
@@ -142,8 +145,27 @@ const styles = StyleSheet.create({
   },
   recipeDetails: {
     fontSize: 14,
-    color: 'black', // Tydlig textfärg
+    color: 'black',
+  },
+
+  // Back Button Styles
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    zIndex: 10, // Ensure the back button is above other elements
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });
 
 export default Menu;
+
