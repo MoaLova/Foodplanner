@@ -11,23 +11,24 @@ const Menu = ({ setActiveView }) => {
   const [hasMoreData, setHasMoreData] = useState(true); // To know if there are more recipes to load
   const [error, setError] = useState(null); // Error state to handle API errors
 
+  // Mock fetch function to simulate API call
   const fetchRecipes = async (pageNumber = 1) => {
     try {
       setLoading(pageNumber === 1);  // Set main loading state if it's the first page
       setLoadingMore(pageNumber > 1); // Set loadingMore for additional pages
       setError(null); // Reset error state before fetching
 
-      // Replace this with your actual API call
-      const response = await fetch(`https://example.com/api/recipes?page=${pageNumber}`); // Example API URL
+      // Simulate API call with a promise
+      const response = await fetch(`https://api.example.com/recipes?page=${pageNumber}`); // Replace with your actual API endpoint
       const data = await response.json();
 
-      const newRecipes = data.recipes; // Adjust according to your API response structure
-
-      if (newRecipes.length === 0) {
-        setHasMoreData(false); // Stop fetching if there's no more data
+      if (data && data.recipes.length > 0) {
+        setRecipes((prevRecipes) => [...prevRecipes, ...data.recipes]); // Update state with fetched recipes
+        setHasMoreData(data.hasMore); // Assume the API returns this information
+      } else {
+        setHasMoreData(false); // No more data
       }
 
-      setRecipes((prevRecipes) => [...prevRecipes, ...newRecipes]);
       setLoading(false);
       setLoadingMore(false);
     } catch (error) {
@@ -47,7 +48,7 @@ const Menu = ({ setActiveView }) => {
   };
 
   const renderRecipeItem = ({ item }) => (
-    <View style={styles.recipeCard}>
+    <View style={styles.recipeCard} key={item.id}> {/* Ensure the key is set here */}
       <Image source={{ uri: item.image }} style={styles.recipeImage} />
       <View style={styles.recipeInfo}>
         <Text style={styles.recipeTitle}>{item.name}</Text>
@@ -73,12 +74,13 @@ const Menu = ({ setActiveView }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <Text style={styles.text}>Back</Text>
-      </TouchableOpacity>
-      
-      <Text style={styles.heading}>Recipes</Text>
-      
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.text}>Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.heading}>Recipes</Text>
+      </View>
+
       <View style={styles.searchContainer}>
         <TextInput 
           style={styles.searchInput} 
@@ -93,11 +95,13 @@ const Menu = ({ setActiveView }) => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text> // Show error message if API call fails
+      ) : recipes.length === 0 ? (
+        <Text style={styles.noDataText}>No recipes available. Please try again later.</Text> // Message for no data
       ) : (
         <FlatList
-          data={recipes}
-          renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()}
+  data={recipes}
+  renderItem={renderRecipeItem}
+  keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.flatListContent}
           initialNumToRender={3}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -118,11 +122,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     padding: 20,
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', // Center the heading
+    marginBottom: 20,
+    width: '100%', // Full width to align properly
+  },
   heading: {
     fontSize: 32,
     fontWeight: 'bold',
     color: 'black',
-    marginBottom: 20,
+    marginHorizontal: 20, // Space around the heading
+    flex: 1, // Allow the heading to take available space
+    textAlign: 'center', // Center the heading text
   },
   searchContainer: {
     flexDirection: 'row',
@@ -134,21 +147,26 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 25, // Rounded corners
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
     marginRight: 10,
     backgroundColor: '#fff',
+    height: 50, // Set a specific height
   },
   filterButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#2196F3', // Blue background
+    paddingVertical: 12, // Adjusted for larger button
+    paddingHorizontal: 20, // Horizontal padding for width
+    borderRadius: 25, // Rounded corners
     alignItems: 'center',
+    justifyContent: 'center', // Center the text in the button
+    height: 50, // Set same height as search input for uniformity
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16, // Adjust font size for better visibility
   },
   recipeCard: {
     flexDirection: 'row',
@@ -157,7 +175,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 10,
     padding: 15,
-    width: '90%',
+    width: width * 0.95, // 95% of screen width
     minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -165,6 +183,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  
   recipeImage: {
     width: width * 0.2,
     height: width * 0.2,
@@ -190,9 +209,6 @@ const styles = StyleSheet.create({
     height: 10,
   },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
@@ -208,6 +224,12 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  noDataText: {
+    fontSize: 18,
+    color: 'black',
     textAlign: 'center',
     marginTop: 20,
   },
