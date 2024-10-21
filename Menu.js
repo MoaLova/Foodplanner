@@ -1,32 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window'); // Get device width
 
-const Menu = ({ setActiveView }) => { // Access setActiveView passed as prop to manage view change
+const Menu = ({ setActiveView }) => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false); // Loading state for pagination
+  const [page, setPage] = useState(1); // Track current page
+  const [hasMoreData, setHasMoreData] = useState(true); // To know if there are more recipes to load
+  const [error, setError] = useState(null); // Error state to handle API errors
 
-  // Dummy data for recipes
-  const dummyRecipes = [
-    { id: 1, name: 'Dummy Recipe 1', image: 'https://via.placeholder.com/80', time: 30, allergy: 'Nuts', mealType: 'Lunch' },
-    { id: 2, name: 'Dummy Recipe 2', image: 'https://via.placeholder.com/80', time: 45, allergy: 'Dairy', mealType: 'Dinner' },
-    { id: 3, name: 'Dummy Recipe 3', image: 'https://via.placeholder.com/80', time: 20, allergy: 'Gluten', mealType: 'Breakfast' },
-  ];
+  const fetchRecipes = async (pageNumber = 1) => {
+    try {
+      setLoading(pageNumber === 1);  // Set main loading state if it's the first page
+      setLoadingMore(pageNumber > 1); // Set loadingMore for additional pages
+      setError(null); // Reset error state before fetching
+
+      // Replace this with your actual API call
+      const response = await fetch(`https://example.com/api/recipes?page=${pageNumber}`); // Example API URL
+      const data = await response.json();
+
+      const newRecipes = data.recipes; // Adjust according to your API response structure
+
+      if (newRecipes.length === 0) {
+        setHasMoreData(false); // Stop fetching if there's no more data
+      }
+
+      setRecipes((prevRecipes) => [...prevRecipes, ...newRecipes]);
+      setLoading(false);
+      setLoadingMore(false);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      setError('Could not load recipes. Please try again later.'); // Set error message
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const loadData = () => {
-      setTimeout(() => {
-        setRecipes(dummyRecipes);
-        setLoading(false);
-      }, 1000);
-    };
-    loadData();
+    fetchRecipes(); // Initial load
   }, []);
 
-  // Define onBack function inside Menu
   const onBack = () => {
-    setActiveView('home');  // Assuming 'home' is the view you want to navigate to
+    setActiveView('home');
   };
 
   const renderRecipeItem = ({ item }) => (
@@ -41,9 +58,21 @@ const Menu = ({ setActiveView }) => { // Access setActiveView passed as prop to 
     </View>
   );
 
+  const loadMoreRecipes = () => {
+    if (!loadingMore && hasMoreData) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchRecipes(nextPage);
+    }
+  };
+
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  };
+
   return (
     <View style={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity onPress={onBack} style={styles.backButton}>
         <Text style={styles.text}>Back</Text>
       </TouchableOpacity>
@@ -61,12 +90,20 @@ const Menu = ({ setActiveView }) => { // Access setActiveView passed as prop to 
       </View>
 
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text> // Show error message if API call fails
       ) : (
         <FlatList
           data={recipes}
           renderItem={renderRecipeItem}
           keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.flatListContent}
+          initialNumToRender={3}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          onEndReached={loadMoreRecipes}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
         />
       )}
     </View>
@@ -120,8 +157,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 10,
     padding: 15,
-    marginVertical: 10,
-    width: '100%',
+    width: '90%',
     minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -147,8 +183,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
   },
-
-  // Back Button Styles
+  flatListContent: {
+    paddingBottom: 30,
+  },
+  separator: {
+    height: 10,
+  },
   backButton: {
     position: 'absolute',
     top: 40,
@@ -158,14 +198,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'black',
-    zIndex: 10, // Ensure the back button is above other elements
+    zIndex: 10,
   },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
   },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
 });
 
 export default Menu;
-
