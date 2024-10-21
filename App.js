@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
+import styles from './Styles/AppStyle';
 import WeeklyMenu from './Weeklymenu'; // Correct path to your components
-import Recepies from './Recepies';
+import Recipes from './Recipes';  // Ensure this is the correct import for Recipes
 import Menu from './Menu';  // Ensure this matches the file name and path
-
 
 const App = () => {
   const [activeView, setActiveView] = useState('home'); // Track the active view
@@ -20,12 +20,12 @@ const App = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.heading}>Foodplanner</Text>
 
-        {/* Recepies button */}
+        {/* Recipes button */}
         <TouchableOpacity
           style={styles.box}
-          onPress={() => setActiveView('recepies')} // Set active view to 'recepies'
+          onPress={() => setActiveView('recipes')} // Corrected to 'recipes'
         >
-          <Text style={styles.text}>Recepies</Text>
+          <Text style={styles.text}>Recipes</Text>
         </TouchableOpacity>
 
         {/* Weekly Menu button */}
@@ -43,7 +43,6 @@ const App = () => {
         >
           <Text style={styles.text}>Menus</Text>
         </TouchableOpacity>
-
       
       </View>
     </View>
@@ -52,8 +51,8 @@ const App = () => {
   // Conditional Rendering of the Active View
   const renderActiveView = () => {
     switch (activeView) {
-      case 'recepies':
-        return <Recepies />;
+      case 'recipes': // Corrected to 'recipes'
+        return <Recipes />;
       case 'weeklyMenu':
         return <WeeklyMenu />;
       case 'menu':
@@ -72,64 +71,19 @@ const App = () => {
         style={styles.background}
         resizeMode="cover"
       >
-        {/* Conditionally render home, weekly menu, or recepies */}
+        {/* Conditionally render home, weekly menu, or recipes */}
         {activeView === 'home' ? (
-  renderHome()
-) : activeView === 'weeklyMenu' ? (
-  <WeeklyMenu onBack={() => setActiveView('home')} />
-) : activeView === 'menu' ? ( // Add this check for the 'menu' view
-  <Menu onBack={() => setActiveView('home')} /> // Render Menu component
-) : (
-  <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
-)}
+          renderHome()
+        ) : activeView === 'weeklyMenu' ? (
+          <WeeklyMenu onBack={() => setActiveView('home')} />
+        ) : activeView === 'menu' ? ( // Add this check for the 'menu' view
+          <Menu onBack={() => setActiveView('home')} /> // Render Menu component
+        ) : (
+          <Recipes onBack={() => setActiveView('home')} /> // Add rendering for Recipes component
+        )}
       </ImageBackground>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  overlay: {
-    flex: 1,
-
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
-    justifyContent: 'flex-start', // Push content up
-
-  },
-  headerContainer: {
-    padding: 20,
-    paddingTop: 80, // Extra padding at the top
-    alignItems: 'center',
-  },
-  heading: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  box: {
-    width: 150,
-    height: 150,
-
-    backgroundColor: 'white', // White boxes
-    borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000', // Black text
-
-  },
-});
 
 export default App;
