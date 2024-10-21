@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, Button, FlatList } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window'); // Hämta enhetens bredd
 
 const Menu = () => {
-  const [recipes, setRecipes] = useState([]); // State for recipes
-  const [loading, setLoading] = useState(true); // State for loading status
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    console.log('App has mounted');
-  }, []);
-
-  // Dummy recipe data
+  // Dummy data för recept
   const dummyRecipes = [
     {
       id: 1,
       name: 'Dummy Recipe 1',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 30,
       allergy: 'Nuts',
       mealType: 'Lunch',
@@ -23,7 +20,7 @@ const Menu = () => {
     {
       id: 2,
       name: 'Dummy Recipe 2',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 45,
       allergy: 'Dairy',
       mealType: 'Dinner',
@@ -31,7 +28,7 @@ const Menu = () => {
     {
       id: 3,
       name: 'Dummy Recipe 3',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 20,
       allergy: 'Gluten',
       mealType: 'Breakfast',
@@ -39,12 +36,11 @@ const Menu = () => {
   ];
 
   useEffect(() => {
-    // Simulate loading and set dummy data
     const loadData = () => {
       setTimeout(() => {
         setRecipes(dummyRecipes);
         setLoading(false);
-      }, 1000); // Simulating a delay of 1 second
+      }, 1000);
     };
 
     loadData();
@@ -56,8 +52,8 @@ const Menu = () => {
       <View style={styles.recipeInfo}>
         <Text style={styles.recipeTitle}>{item.name}</Text>
         <Text style={styles.recipeDetails}>{item.time} min</Text>
-        <Text style={styles.recipeDetails}>Allergy: {item.allergy}</Text>
-        <Text style={styles.recipeDetails}>Meal Type: {item.mealType}</Text>
+        <Text style={styles.recipeDetails}>{item.allergy}</Text>
+        <Text style={styles.recipeDetails}>{item.mealType}</Text>
       </View>
     </View>
   );
@@ -70,16 +66,16 @@ const Menu = () => {
           style={styles.searchInput} 
           placeholder="Sök recept..." 
         />
-        <Button title="Filter" onPress={() => { /* Add filter logic here */ }} />
+        <Button title="Filter" onPress={() => {}} />
       </View>
 
       {loading ? (
-        <Text>Loading...</Text> // Display loading message
+        <Text>Laddar...</Text>
       ) : (
         <FlatList
           data={recipes}
           renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()} // Ensure each card has a unique key
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
     </View>
@@ -89,57 +85,64 @@ const Menu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     backgroundColor: '#f5f5f5',
+    padding: 20,
   },
   heading: {
-    fontSize: 32, // Heading size
+    fontSize: 32,
     fontWeight: 'bold',
-    color: 'black', // Heading color
-    marginBottom: 20, // Space below heading
+    color: 'black',
+    marginBottom: 20,
   },
   searchContainer: {
-    flexDirection: 'row', // Row layout for search field and button
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20, // Margin below search field
+    marginBottom: 20,
+    width: '100%',
   },
   searchInput: {
-    flex: 1, // Search field takes as much space as possible
+    flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10, // Padding for the search input
-    marginRight: 10, // Margin to the right of the search input
+    padding: 10,
+    marginRight: 10,
   },
   recipeCard: {
-    flexDirection: 'row', // Layout image and text side by side
-    backgroundColor: 'white',
+    flexDirection: 'row',
+    backgroundColor: 'lightgrey', // Tydlig bakgrundsfärg
+    borderWidth: 1,
+    borderColor: 'black', // Tydlig kant
     borderRadius: 10,
     padding: 15,
     marginVertical: 10,
+    width: '100%', // Full bredd
+    height: 100, // Fasta höjd
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, // Shadow effect
+    elevation: 5,
   },
   recipeImage: {
-    width: 80, // Image width
-    height: 80, // Image height
+    width: 80,
+    height: 80,
     borderRadius: 10,
     marginRight: 15,
   },
   recipeInfo: {
-    flex: 1, // Make the info take the rest of the space
+    flex: 1,
   },
   recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Black text color
+    color: 'black',
   },
   recipeDetails: {
     fontSize: 14,
-    color: '#666', // Grey text color
+    color: 'black', // Tydlig textfärg
   },
 });
 
