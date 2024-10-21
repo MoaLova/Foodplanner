@@ -1,29 +1,16 @@
 import React, { useEffect, useState } from 'react';
-
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Button, FlatList } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import WeeklyMenu from './Weeklymenu'; // Make sure the file name matches
-import Recepies from './Recepies'; // Import the Recepies component
-
-
 const Menu = () => {
-  const [recipes, setRecipes] = useState([]); // State för att hålla recepten
-  const [loading, setLoading] = useState(true); // State för att hantera laddning
-
-
+  const [recipes, setRecipes] = useState([]); // State for recipes
+  const [loading, setLoading] = useState(true); // State for loading status
 
   useEffect(() => {
     console.log('App has mounted');
   }, []);
 
-  // Main Home View
-  const renderHome = () => (
-    <View style={styles.overlay}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.heading}>Foodplanner</Text>
-
-  // Dummy data för recept
+  // Dummy recipe data
   const dummyRecipes = [
     {
       id: 1,
@@ -51,14 +38,13 @@ const Menu = () => {
     },
   ];
 
-
   useEffect(() => {
-    // Simulera laddning och sätt dummy-data
+    // Simulate loading and set dummy data
     const loadData = () => {
       setTimeout(() => {
         setRecipes(dummyRecipes);
         setLoading(false);
-      }, 1000); // Simulera en fördröjning på 1 sekund
+      }, 1000); // Simulating a delay of 1 second
     };
 
     loadData();
@@ -70,8 +56,8 @@ const Menu = () => {
       <View style={styles.recipeInfo}>
         <Text style={styles.recipeTitle}>{item.name}</Text>
         <Text style={styles.recipeDetails}>{item.time} min</Text>
-        <Text style={styles.recipeDetails}>{item.allergy}</Text>
-        <Text style={styles.recipeDetails}>{item.mealType}</Text>
+        <Text style={styles.recipeDetails}>Allergy: {item.allergy}</Text>
+        <Text style={styles.recipeDetails}>Meal Type: {item.mealType}</Text>
       </View>
     </View>
   );
@@ -84,16 +70,16 @@ const Menu = () => {
           style={styles.searchInput} 
           placeholder="Sök recept..." 
         />
-        <Button title="Filter" onPress={() => { /* Lägg till filter-logik här */ }} />
+        <Button title="Filter" onPress={() => { /* Add filter logic here */ }} />
       </View>
 
       {loading ? (
-        <Text>Laddar...</Text> // Visa laddningsmeddelande
+        <Text>Loading...</Text> // Display loading message
       ) : (
         <FlatList
           data={recipes}
           renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()} // Se till att varje kort har en unik nyckel
+          keyExtractor={(item) => item.id.toString()} // Ensure each card has a unique key
         />
       )}
     </View>
@@ -103,90 +89,57 @@ const Menu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-  },
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  overlay: {
-    flex: 1,
-
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
-    justifyContent: 'flex-start', // Push content up
-
-  },
-  headerContainer: {
     padding: 20,
-    paddingTop: 80, // Extra padding at the top
-    justifyContent: 'flex-start', // Ändra till flex-start för att placera innehåll högst upp
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5', // Valfri bakgrundsfärg
-    padding: 20, // Lägg till padding
+    backgroundColor: '#f5f5f5',
   },
   heading: {
-    fontSize: 32, // Storlek på huvudrubriken
+    fontSize: 32, // Heading size
     fontWeight: 'bold',
-    color: 'black', // Färg på rubriken
-    marginBottom: 20, // Marginal under rubriken
+    color: 'black', // Heading color
+    marginBottom: 20, // Space below heading
   },
-
-  box: {
-    width: 150,
-    height: 150,
-    backgroundColor: 'white', // White boxes
-    borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 18,
-    justifyContent: 'center',
-
   searchContainer: {
-    flexDirection: 'row', // Gör så att sökfält och knapp är i rad
-
+    flexDirection: 'row', // Row layout for search field and button
     alignItems: 'center',
-    marginBottom: 20, // Marginal under sökfältet
+    marginBottom: 20, // Margin below search field
   },
   searchInput: {
-    flex: 1, // Gör så att sökfältet tar upp så mycket plats som möjligt
+    flex: 1, // Search field takes as much space as possible
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10, // Padding för sökfältet
-    marginRight: 10, // Marginal till höger om sökfältet
+    padding: 10, // Padding for the search input
+    marginRight: 10, // Margin to the right of the search input
   },
   recipeCard: {
-    flexDirection: 'row', // Gör så att bilden och texten ligger i rad
+    flexDirection: 'row', // Layout image and text side by side
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 15,
     marginVertical: 10,
-    width: '100%', // Gör rektanglarna bredare
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, // Lägg till skugga
+    elevation: 5, // Shadow effect
   },
   recipeImage: {
-    width: 80, // Bredd på bilden
-    height: 80, // Höjd på bilden
+    width: 80, // Image width
+    height: 80, // Image height
     borderRadius: 10,
     marginRight: 15,
   },
   recipeInfo: {
-    flex: 1, // Gör så att info tar upp resten av platsen
+    flex: 1, // Make the info take the rest of the space
   },
   recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000', // Black text
-
-
+    color: '#000', // Black text color
   },
   recipeDetails: {
     fontSize: 14,
-    color: '#666',
-
+    color: '#666', // Grey text color
   },
 });
 
