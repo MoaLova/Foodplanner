@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+
 import WeeklyMenu from './Weeklymenu'; // Make sure the file name matches
 import Recepies from './Recepies'; // Import the Recepies component
 
 const App = () => {
   const [activeView, setActiveView] = useState('home'); // Track the active view
+
 
   useEffect(() => {
     console.log('App has mounted');
@@ -76,8 +78,10 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
+
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
     justifyContent: 'flex-start', // Push content up
+
   },
   headerContainer: {
     padding: 20,
@@ -92,6 +96,7 @@ const styles = StyleSheet.create({
   box: {
     width: 150,
     height: 150,
+
     backgroundColor: 'white', // White boxes
     borderColor: 'black',
     borderWidth: 2,
@@ -104,6 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000', // Black text
+
   },
 });
 
