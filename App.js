@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
+
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import WeeklyMenu from './Weeklymenu'; // Make sure the file name matches
 import Recepies from './Recepies'; // Import the Recepies component
 
-const App = () => {
-  const [activeView, setActiveView] = useState('home'); // Track the active view
+
+const Menu = () => {
+  const [recipes, setRecipes] = useState([]); // State för att hålla recepten
+  const [loading, setLoading] = useState(true); // State för att hantera laddning
+
 
 
   useEffect(() => {
@@ -19,51 +23,79 @@ const App = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.heading}>Foodplanner</Text>
 
-        {/* Make Recepies button */}
-        <TouchableOpacity
-          style={styles.box}
-          onPress={() => setActiveView('recepies')} // Set active view to 'recepies'
-        >
-          <Text style={styles.text}>Reccepies</Text>
-        </TouchableOpacity>
+  // Dummy data för recept
+  const dummyRecipes = [
+    {
+      id: 1,
+      name: 'Dummy Recipe 1',
+      image: 'https://via.placeholder.com/80', // Placeholder image
+      time: 30,
+      allergy: 'Nuts',
+      mealType: 'Lunch',
+    },
+    {
+      id: 2,
+      name: 'Dummy Recipe 2',
+      image: 'https://via.placeholder.com/80', // Placeholder image
+      time: 45,
+      allergy: 'Dairy',
+      mealType: 'Dinner',
+    },
+    {
+      id: 3,
+      name: 'Dummy Recipe 3',
+      image: 'https://via.placeholder.com/80', // Placeholder image
+      time: 20,
+      allergy: 'Gluten',
+      mealType: 'Breakfast',
+    },
+  ];
 
-        {/* Make Weekly Menu button */}
-        <TouchableOpacity
-          style={styles.box}
-          onPress={() => setActiveView('weeklyMenu')} // Set active view to 'weeklyMenu'
-        >
-          <Text style={styles.text}>Weekly Menu</Text>
-        </TouchableOpacity>
 
-        <View style={styles.box}>
-          <Text style={styles.text}>List</Text>
-        </View>
+  useEffect(() => {
+    // Simulera laddning och sätt dummy-data
+    const loadData = () => {
+      setTimeout(() => {
+        setRecipes(dummyRecipes);
+        setLoading(false);
+      }, 1000); // Simulera en fördröjning på 1 sekund
+    };
 
-        <View style={styles.box}>
-          <Text style={styles.text}>Saved</Text>
-        </View>
+    loadData();
+  }, []);
+
+  const renderRecipeItem = ({ item }) => (
+    <View style={styles.recipeCard}>
+      <Image source={{ uri: item.image }} style={styles.recipeImage} />
+      <View style={styles.recipeInfo}>
+        <Text style={styles.recipeTitle}>{item.name}</Text>
+        <Text style={styles.recipeDetails}>{item.time} min</Text>
+        <Text style={styles.recipeDetails}>{item.allergy}</Text>
+        <Text style={styles.recipeDetails}>{item.mealType}</Text>
       </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
-      {/* Background image */}
-      <ImageBackground
-        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }} // URL for background image
-        style={styles.background}
-        resizeMode="cover"
-      >
-        {/* Conditionally render home, weekly menu, or recepies */}
-        {activeView === 'home' ? (
-          renderHome()
-        ) : activeView === 'weeklyMenu' ? (
-          <WeeklyMenu onBack={() => setActiveView('home')} />
-        ) : (
-          <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
-        )}
-      </ImageBackground>
+      <Text style={styles.heading}>Recepies</Text>
+      <View style={styles.searchContainer}>
+        <TextInput 
+          style={styles.searchInput} 
+          placeholder="Sök recept..." 
+        />
+        <Button title="Filter" onPress={() => { /* Lägg till filter-logik här */ }} />
+      </View>
+
+      {loading ? (
+        <Text>Laddar...</Text> // Visa laddningsmeddelande
+      ) : (
+        <FlatList
+          data={recipes}
+          renderItem={renderRecipeItem}
+          keyExtractor={(item) => item.id.toString()} // Se till att varje kort har en unik nyckel
+        />
+      )}
     </View>
   );
 };
@@ -71,6 +103,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
   },
   background: {
     flex: 1,
@@ -86,31 +119,75 @@ const styles = StyleSheet.create({
   headerContainer: {
     padding: 20,
     paddingTop: 80, // Extra padding at the top
+    justifyContent: 'flex-start', // Ändra till flex-start för att placera innehåll högst upp
     alignItems: 'center',
+    backgroundColor: '#f5f5f5', // Valfri bakgrundsfärg
+    padding: 20, // Lägg till padding
   },
   heading: {
-    fontSize: 36,
+    fontSize: 32, // Storlek på huvudrubriken
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black', // Färg på rubriken
+    marginBottom: 20, // Marginal under rubriken
   },
+
   box: {
     width: 150,
     height: 150,
-
     backgroundColor: 'white', // White boxes
     borderColor: 'black',
     borderWidth: 2,
     borderRadius: 18,
     justifyContent: 'center',
+
+  searchContainer: {
+    flexDirection: 'row', // Gör så att sökfält och knapp är i rad
+
     alignItems: 'center',
-    margin: 10,
+    marginBottom: 20, // Marginal under sökfältet
   },
-  text: {
+  searchInput: {
+    flex: 1, // Gör så att sökfältet tar upp så mycket plats som möjligt
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10, // Padding för sökfältet
+    marginRight: 10, // Marginal till höger om sökfältet
+  },
+  recipeCard: {
+    flexDirection: 'row', // Gör så att bilden och texten ligger i rad
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    width: '100%', // Gör rektanglarna bredare
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5, // Lägg till skugga
+  },
+  recipeImage: {
+    width: 80, // Bredd på bilden
+    height: 80, // Höjd på bilden
+    borderRadius: 10,
+    marginRight: 15,
+  },
+  recipeInfo: {
+    flex: 1, // Gör så att info tar upp resten av platsen
+  },
+  recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000', // Black text
 
+
+  },
+  recipeDetails: {
+    fontSize: 14,
+    color: '#666',
+
   },
 });
 
-export default App;
+export default Menu;
