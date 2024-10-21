@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import WeeklyMenu from './Weeklymenu'; // Make sure the file name matches
-import Recepies from './Recepies'; // Import the Recepies component
+import WeeklyMenu from './Weeklymenu'; // Correct path to your components
+import Recepies from './Recepies';
+import Menu from './Menu';  // Ensure this matches the file name and path
+
 
 const App = () => {
   const [activeView, setActiveView] = useState('home'); // Track the active view
-
 
   useEffect(() => {
     console.log('App has mounted');
@@ -19,15 +20,15 @@ const App = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.heading}>Foodplanner</Text>
 
-        {/* Make Recepies button */}
+        {/* Recepies button */}
         <TouchableOpacity
           style={styles.box}
           onPress={() => setActiveView('recepies')} // Set active view to 'recepies'
         >
-          <Text style={styles.text}>Reccepies</Text>
+          <Text style={styles.text}>Recepies</Text>
         </TouchableOpacity>
 
-        {/* Make Weekly Menu button */}
+        {/* Weekly Menu button */}
         <TouchableOpacity
           style={styles.box}
           onPress={() => setActiveView('weeklyMenu')} // Set active view to 'weeklyMenu'
@@ -35,16 +36,32 @@ const App = () => {
           <Text style={styles.text}>Weekly Menu</Text>
         </TouchableOpacity>
 
-        <View style={styles.box}>
-          <Text style={styles.text}>List</Text>
-        </View>
+        {/* Menus button */}
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('menu')} // Set active view to 'menus'
+        >
+          <Text style={styles.text}>Menus</Text>
+        </TouchableOpacity>
 
-        <View style={styles.box}>
-          <Text style={styles.text}>Saved</Text>
-        </View>
+      
       </View>
     </View>
   );
+
+  // Conditional Rendering of the Active View
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'recepies':
+        return <Recepies />;
+      case 'weeklyMenu':
+        return <WeeklyMenu />;
+      case 'menu':
+        return <Menu />; // Ensure Menu is rendered when 'menus' is selected
+      default:
+        return renderHome(); // Default to home view
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -57,12 +74,14 @@ const App = () => {
       >
         {/* Conditionally render home, weekly menu, or recepies */}
         {activeView === 'home' ? (
-          renderHome()
-        ) : activeView === 'weeklyMenu' ? (
-          <WeeklyMenu onBack={() => setActiveView('home')} />
-        ) : (
-          <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
-        )}
+  renderHome()
+) : activeView === 'weeklyMenu' ? (
+  <WeeklyMenu onBack={() => setActiveView('home')} />
+) : activeView === 'menu' ? ( // Add this check for the 'menu' view
+  <Menu onBack={() => setActiveView('home')} /> // Render Menu component
+) : (
+  <Recepies onBack={() => setActiveView('home')} /> // Add rendering for Recepies component
+)}
       </ImageBackground>
     </View>
   );
