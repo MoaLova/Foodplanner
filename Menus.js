@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Text, Image, FlatList } from 'react-native';
+import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window'); // Hämta enhetens bredd
 
 const Menu = () => {
-  const [recipes, setRecipes] = useState([]); // State för att hålla recepten
-  const [loading, setLoading] = useState(true); // State för att hantera laddning
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Dummy data för recept
   const dummyRecipes = [
     {
       id: 1,
       name: 'Dummy Recipe 1',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 30,
       allergy: 'Nuts',
       mealType: 'Lunch',
@@ -18,7 +20,7 @@ const Menu = () => {
     {
       id: 2,
       name: 'Dummy Recipe 2',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 45,
       allergy: 'Dairy',
       mealType: 'Dinner',
@@ -26,7 +28,7 @@ const Menu = () => {
     {
       id: 3,
       name: 'Dummy Recipe 3',
-      image: 'https://via.placeholder.com/80', // Placeholder image
+      image: 'https://via.placeholder.com/80',
       time: 20,
       allergy: 'Gluten',
       mealType: 'Breakfast',
@@ -34,12 +36,11 @@ const Menu = () => {
   ];
 
   useEffect(() => {
-    // Simulera laddning och sätt dummy-data
     const loadData = () => {
       setTimeout(() => {
         setRecipes(dummyRecipes);
         setLoading(false);
-      }, 1000); // Simulera en fördröjning på 1 sekund
+      }, 1000);
     };
 
     loadData();
@@ -65,16 +66,16 @@ const Menu = () => {
           style={styles.searchInput} 
           placeholder="Sök recept..." 
         />
-        <Button title="Filter" onPress={() => { /* Lägg till filter-logik här */ }} />
+        <Button title="Filter" onPress={() => {}} />
       </View>
 
       {loading ? (
-        <Text>Laddar...</Text> // Visa laddningsmeddelande
+        <Text>Laddar...</Text>
       ) : (
         <FlatList
           data={recipes}
           renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()} // Se till att varje kort har en unik nyckel
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
     </View>
@@ -84,59 +85,64 @@ const Menu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start', // Ändra till flex-start för att placera innehåll högst upp
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5', // Valfri bakgrundsfärg
-    padding: 20, // Lägg till padding
+    backgroundColor: '#f5f5f5',
+    padding: 20,
   },
   heading: {
-    fontSize: 32, // Storlek på huvudrubriken
+    fontSize: 32,
     fontWeight: 'bold',
-    color: 'black', // Färg på rubriken
-    marginBottom: 20, // Marginal under rubriken
+    color: 'black',
+    marginBottom: 20,
   },
   searchContainer: {
-    flexDirection: 'row', // Gör så att sökfält och knapp är i rad
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20, // Marginal under sökfältet
+    marginBottom: 20,
+    width: '100%',
   },
   searchInput: {
-    flex: 1, // Gör så att sökfältet tar upp så mycket plats som möjligt
+    flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 10, // Padding för sökfältet
-    marginRight: 10, // Marginal till höger om sökfältet
+    padding: 10,
+    marginRight: 10,
   },
   recipeCard: {
-    flexDirection: 'row', // Gör så att bilden och texten ligger i rad
-    backgroundColor: 'white',
+    flexDirection: 'row',
+    backgroundColor: 'lightgrey', // Tydlig bakgrundsfärg
+    borderWidth: 1,
+    borderColor: 'black', // Tydlig kant
     borderRadius: 10,
     padding: 15,
     marginVertical: 10,
-    width: '100%', // Gör rektanglarna bredare
+    width: '100%', // Full bredd
+    height: 100, // Fasta höjd
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, // Lägg till skugga
+    elevation: 5,
   },
   recipeImage: {
-    width: 80, // Bredd på bilden
-    height: 80, // Höjd på bilden
+    width: 80,
+    height: 80,
     borderRadius: 10,
     marginRight: 15,
   },
   recipeInfo: {
-    flex: 1, // Gör så att info tar upp resten av platsen
+    flex: 1,
   },
   recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'black',
   },
   recipeDetails: {
     fontSize: 14,
-    color: '#666',
+    color: 'black', // Tydlig textfärg
   },
 });
 
