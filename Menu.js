@@ -1,171 +1,128 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Text, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import { SPOONACULAR_API_KEY } from '@env';
+import { View, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import styles from './Styles/MenuStyle';
 
-const { width } = Dimensions.get('window'); // Get device width
-
-const Menu = ({ setActiveView }) => { // Access setActiveView passed as prop to manage view change
+const Menu = ({ onBack }) => { // Change setActiveView to onBack here
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search input
 
-  // Dummy data for recipes
-  const dummyRecipes = [
-    { id: 1, name: 'Dummy Recipe 1', image: 'https://via.placeholder.com/80', time: 30, allergy: 'Nuts', mealType: 'Lunch' },
-    { id: 2, name: 'Dummy Recipe 2', image: 'https://via.placeholder.com/80', time: 45, allergy: 'Dairy', mealType: 'Dinner' },
-    { id: 3, name: 'Dummy Recipe 3', image: 'https://via.placeholder.com/80', time: 20, allergy: 'Gluten', mealType: 'Breakfast' },
-  ];
+  // Fetch recipes based on search term
+  const fetchRecipes = async (pageNumber = 1, search = '') => {
+    try {
+      setLoading(pageNumber === 1); 
+      setLoadingMore(pageNumber > 1);
+      setError(null);
+
+      // API call with search term if it exists
+      const response = await fetch(
+        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}`
+      );
+
+      const data = await response.json();
+
+      if (data && data.results.length > 0) {
+        setRecipes((prevRecipes) => pageNumber === 1 ? data.results : [...prevRecipes, ...data.results]); // Reset if first page
+        setHasMoreData(data.results.length === 10);
+      } else {
+        setHasMoreData(false);
+      }
+
+      setLoading(false);
+      setLoadingMore(false);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      setError('Could not load recipes. Please try again later.');
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    const loadData = () => {
-      setTimeout(() => {
-        setRecipes(dummyRecipes);
-        setLoading(false);
-      }, 1000);
-    };
-    loadData();
+    fetchRecipes(); // Initial load
   }, []);
 
-  // Define onBack function inside Menu
-  const onBack = () => {
-    setActiveView('home');  // Assuming 'home' is the view you want to navigate to
+  const handleBack = () => {
+    onBack();  // Use onBack here to trigger the parent function
   };
 
   const renderRecipeItem = ({ item }) => (
-    <View style={styles.recipeCard}>
+    <View style={styles.recipeCard} key={item.id}>
       <Image source={{ uri: item.image }} style={styles.recipeImage} />
       <View style={styles.recipeInfo}>
-        <Text style={styles.recipeTitle}>{item.name}</Text>
-        <Text style={styles.recipeDetails}>{item.time} min</Text>
-        <Text style={styles.recipeDetails}>{item.allergy}</Text>
-        <Text style={styles.recipeDetails}>{item.mealType}</Text>
+        <Text style={styles.recipeTitle}>{item.title}</Text>
+        <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
       </View>
     </View>
   );
 
+  const loadMoreRecipes = () => {
+    if (!loadingMore && hasMoreData) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchRecipes(nextPage, searchTerm); // Pass search term for next page
+    }
+  };
+
+  const handleSearch = () => {
+    setPage(1); // Reset to first page for new search
+    fetchRecipes(1, searchTerm); // Fetch recipes based on search term
+  };
+
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  };
+  console.log("Rendering Menu Component");
+
   return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <Text style={styles.text}>Back</Text>
-      </TouchableOpacity>
-      
-      <Text style={styles.heading}>Recipes</Text>
-      
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Text style={styles.text}>Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.heading}>Recipes</Text>
+      </View>
+  
       <View style={styles.searchContainer}>
         <TextInput 
           style={styles.searchInput} 
           placeholder="Search recipes..." 
+          value={searchTerm} 
+          onChangeText={setSearchTerm} 
         />
-        <TouchableOpacity style={styles.filterButton} onPress={() => {}}>
-          <Text style={styles.buttonText}>Filter</Text>
+        <TouchableOpacity style={styles.filterButton} onPress={handleSearch}>
+          <Text style={styles.buttonText}>Search</Text>
         </TouchableOpacity>
       </View>
-
+  
       {loading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : recipes.length === 0 ? (
+        <Text style={styles.noDataText}>No recipes available. Please try again later.</Text>
       ) : (
         <FlatList
           data={recipes}
           renderItem={renderRecipeItem}
           keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.flatListContent}
+          initialNumToRender={3}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          onEndReached={loadMoreRecipes}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
         />
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-  },
-  heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 20,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginRight: 10,
-    backgroundColor: '#fff',
-  },
-  filterButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  recipeCard: {
-    flexDirection: 'row',
-    backgroundColor: 'lightgrey',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 10,
-    padding: 15,
-    marginVertical: 10,
-    width: '100%',
-    minHeight: 100,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  recipeImage: {
-    width: width * 0.2,
-    height: width * 0.2,
-    borderRadius: 10,
-    marginRight: 15,
-  },
-  recipeInfo: {
-    flex: 1,
-  },
-  recipeTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  recipeDetails: {
-    fontSize: 14,
-    color: 'black',
-  },
-
-  // Back Button Styles
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'black',
-    zIndex: 10, // Ensure the back button is above other elements
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-});
 
 export default Menu;
 
