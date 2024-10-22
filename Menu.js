@@ -79,6 +79,7 @@ const Menu = ({ setActiveView }) => {
     if (!loadingMore) return null;
     return <ActivityIndicator size="large" color="#0000ff" />;
   };
+  console.log("Rendering Menu Component");
 
   return (
     <View style={styles.container}>
@@ -88,19 +89,19 @@ const Menu = ({ setActiveView }) => {
         </TouchableOpacity>
         <Text style={styles.heading}>Recipes</Text>
       </View>
-
+  
       <View style={styles.searchContainer}>
         <TextInput 
           style={styles.searchInput} 
           placeholder="Search recipes..." 
-          value={searchTerm} // Bind input value to state
-          onChangeText={setSearchTerm} // Update state on text change
+          value={searchTerm} 
+          onChangeText={setSearchTerm} 
         />
         <TouchableOpacity style={styles.filterButton} onPress={handleSearch}>
-          <Text style={styles.buttonText}>Search</Text> {/* Change this to Search */}
+          <Text style={styles.buttonText}>Search</Text>
         </TouchableOpacity>
       </View>
-
+  
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : error ? (
@@ -122,6 +123,7 @@ const Menu = ({ setActiveView }) => {
       )}
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
