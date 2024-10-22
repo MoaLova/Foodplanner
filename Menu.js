@@ -23,7 +23,7 @@ const Menu = ({ setActiveView }) => {
       // API call to Spoonacular, fetching recipes
       const response = await fetch(
         `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}`
-      );
+      );      
 
       const data = await response.json();
 
