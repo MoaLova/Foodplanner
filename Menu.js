@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { SPOONACULAR_API_KEY } from '@env';
-import { View, StyleSheet, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import styles from './Styles/MenuStyle';
 
-const { width } = Dimensions.get('window'); // Get device width
-
-const Menu = ({ setActiveView }) => {
+const Menu = ({ onBack }) => { // Change setActiveView to onBack here
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -48,8 +47,8 @@ const Menu = ({ setActiveView }) => {
     fetchRecipes(); // Initial load
   }, []);
 
-  const onBack = () => {
-    setActiveView('home');
+  const handleBack = () => {
+    onBack();  // Use onBack here to trigger the parent function
   };
 
   const renderRecipeItem = ({ item }) => (
@@ -84,7 +83,7 @@ const Menu = ({ setActiveView }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.heading}>Recipes</Text>
@@ -123,127 +122,7 @@ const Menu = ({ setActiveView }) => {
       )}
     </View>
   );
-  
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    width: '100%',
-  },
-  heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'black',
-    marginHorizontal: 20,
-    flex: 1,
-    textAlign: 'center',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 25,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginRight: 10,
-    backgroundColor: '#fff',
-    height: 50,
-  },
-  filterButton: {
-    backgroundColor: '#2196F3',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  recipeCard: {
-    flexDirection: 'row',
-    backgroundColor: 'lightgrey',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 10,
-    padding: 15,
-    width: width * 0.95,
-    minHeight: 100,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  recipeImage: {
-    width: width * 0.2,
-    height: width * 0.2,
-    borderRadius: 10,
-    marginRight: 15,
-  },
-  recipeInfo: {
-    flex: 1,
-  },
-  recipeTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  recipeDetails: {
-    fontSize: 14,
-    color: 'black',
-  },
-  flatListContent: {
-    paddingBottom: 30,
-  },
-  separator: {
-    height: 10,
-  },
-  backButton: {
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'black',
-    zIndex: 10,
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  noDataText: {
-    fontSize: 18,
-    color: 'black',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-});
-
 export default Menu;
+
