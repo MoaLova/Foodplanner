@@ -3,7 +3,7 @@ import { SPOONACULAR_API_KEY } from '@env';
 import { View, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
 
-const Menu = ({ onBack }) => { // Change setActiveView to onBack here
+const Menu = ({ onBack }) => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -19,7 +19,6 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
       setLoadingMore(pageNumber > 1);
       setError(null);
 
-      // API call with search term if it exists
       const response = await fetch(
         `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}`
       );
@@ -27,7 +26,7 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
       const data = await response.json();
 
       if (data && data.results.length > 0) {
-        setRecipes((prevRecipes) => pageNumber === 1 ? data.results : [...prevRecipes, ...data.results]); // Reset if first page
+        setRecipes((prevRecipes) => pageNumber === 1 ? data.results : [...prevRecipes, ...data.results]);
         setHasMoreData(data.results.length === 10);
       } else {
         setHasMoreData(false);
@@ -52,13 +51,15 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
   };
 
   const renderRecipeItem = ({ item }) => (
-    <View style={styles.recipeCard} key={item.id}>
-      <Image source={{ uri: item.image }} style={styles.recipeImage} />
-      <View style={styles.recipeInfo}>
-        <Text style={styles.recipeTitle}>{item.title}</Text>
-        <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+    <TouchableOpacity onPress={() => console.log('Recipe Selected: ', item.id)}>
+      <View style={styles.recipeCard} key={item.id}>
+        <Image source={{ uri: item.image }} style={styles.recipeImage} />
+        <View style={styles.recipeInfo}>
+          <Text style={styles.recipeTitle}>{item.title}</Text>
+          <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   const loadMoreRecipes = () => {
@@ -78,7 +79,6 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
     if (!loadingMore) return null;
     return <ActivityIndicator size="large" color="#0000ff" />;
   };
-  console.log("Rendering Menu Component");
 
   return (
     <View style={styles.container}>
@@ -86,21 +86,17 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
-        <Text style={styles.heading}>Recipes</Text>
+        <Text style={styles.heading}>Menu</Text>
       </View>
-  
-      <View style={styles.searchContainer}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Search recipes..." 
-          value={searchTerm} 
-          onChangeText={setSearchTerm} 
-        />
-        <TouchableOpacity style={styles.filterButton} onPress={handleSearch}>
-          <Text style={styles.buttonText}>Search</Text>
-        </TouchableOpacity>
-      </View>
-  
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search for recipes..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        onSubmitEditing={handleSearch} // Trigger search when "enter" is pressed
+      />
+
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : error ? (
@@ -125,4 +121,3 @@ const Menu = ({ onBack }) => { // Change setActiveView to onBack here
 };
 
 export default Menu;
-

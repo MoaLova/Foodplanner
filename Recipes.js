@@ -1,44 +1,45 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
 
-const Recipes = ({ onBack }) => {
-  const [description, setDescription] = useState('This is the initial description of the recipe.');
-  const [details, setDetails] = useState(''); // State for the new text section
+const Recipes = ({ recipe, onBack }) => { // Receive recipe through props
+  const [details, setDetails] = useState(''); // State for ingredients/instructions
 
-  // Functions to change the text for ingredients and instructions
-  const changeToIngredients = () => setDetails('Ingredients: List of ingredients here.');
-  const changeToInstructions = () => setDetails('Instructions: Step-by-step instructions here.');
+  // Function to change the details to ingredients
+  const changeToIngredients = () => {
+    const ingredientsList = recipe.ingredients
+      ? recipe.ingredients.map((ingredient, index) => `${index + 1}. ${ingredient}`).join('\n')
+      : 'No ingredients available.';
+    setDetails(`Ingredients:\n${ingredientsList}`);
+  };
+
+  // Function to change the details to instructions
+  const changeToInstructions = () => {
+    const instructionsList = recipe.instructions
+      ? recipe.instructions.join('\n')
+      : 'No instructions available.';
+    setDetails(`Instructions:\n${instructionsList}`);
+  };
 
   return (
     <View style={styles.container}>
-      {/* Light yellow box covering the content */}
       <View style={styles.contentBox}>
-        {/* Layout with image and text header paragraph */}
+        {/* Recipe Image */}
         <View style={styles.recipeContainer}>
-          {/* Placeholder for an image with colored background */}
-          <View style={styles.imagePlaceholder}>
-            <Text style={styles.placeholderText}>Image Placeholder</Text>
-          </View>
+          <Image source={{ uri: recipe.image }} style={styles.recipeImage} /> {/* Display the image */}
 
-          {/* Text next to the image */}
           <View style={styles.textContainer}>
-            {/* Placeholder for recipe title */}
-            <Text style={styles.recipeTitle}>Recipe Title</Text>
-
-            {/* Additional information below the title */}
-            <Text style={styles.recipeInfo}>30 minutes</Text>
-            <Text style={styles.recipeInfo}>Lunch</Text>
-            <Text style={styles.recipeInfo}>Lactose-free</Text>
+            <Text style={styles.recipeTitle}>{recipe.title}</Text> {/* Display the title */}
+            <Text style={styles.recipeInfo}>{recipe.readyInMinutes} minutes</Text>
+            <Text style={styles.recipeInfo}>Category: {recipe.category || 'Lunch'}</Text>
+            <Text style={styles.recipeInfo}>{recipe.diet || 'Lactose-free'}</Text>
           </View>
         </View>
 
-        {/* Move description directly below the image and title */}
-        <Text style={styles.recipeText}>
-          {description} {/* Dynamic text for recipe description */}
-        </Text>
+        {/* Recipe Description */}
+        <Text style={styles.recipeText}>{recipe.description || 'This is a detailed description of the recipe.'}</Text>
 
-        {/* Buttons to change description, now in a row */}
+        {/* Buttons for Ingredients and Instructions */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
             <Text style={styles.buttonText}>Ingredients</Text>
@@ -48,12 +49,10 @@ const Recipes = ({ onBack }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Display the details based on button click */}
-        <Text style={styles.detailsText}>
-          {details} {/* Dynamic text for ingredients or instructions */}
-        </Text>
+        {/* Display the ingredients or instructions based on button click */}
+        <Text style={styles.detailsText}>{details || 'Select Ingredients or Instructions to view details.'}</Text>
 
-        {/* Back button at the bottom */}
+        {/* Back Button */}
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
@@ -61,6 +60,5 @@ const Recipes = ({ onBack }) => {
     </View>
   );
 };
-
 
 export default Recipes;

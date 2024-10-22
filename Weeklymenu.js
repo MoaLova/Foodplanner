@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import Menu from './Menu';  // Import the Menu component
+import Menu from './Menu'; // Import the Menu component
 import styles from './Styles/WeeklyMenuStyles';
 
 const WeeklyMenu = ({ onBack }) => {
