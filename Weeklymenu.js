@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
+import Menu from './Menu';  // Import the Menu component
 import styles from './Styles/WeeklyMenuStyles';
 
 const WeeklyMenu = ({ onBack }) => {
   const currentMonth = 'January';
   const nextMonth = 'February';
   const [weekNumber, setWeekNumber] = useState(1);
+  const [showMenu, setShowMenu] = useState(false); // State to toggle Menu component
   const dateRanges = [
     { start: 1, end: 7 },
     { start: 8, end: 14 },
@@ -41,10 +43,6 @@ const WeeklyMenu = ({ onBack }) => {
     setSelectedDay(day);
   };
 
-  const handleMealChange = (mealType, meal) => {
-    // Implementation for meal change
-  };
-
   const handleWeekChange = (direction) => {
     setWeekNumber((prevWeekNumber) => {
       let newWeekNumber = prevWeekNumber;
@@ -57,6 +55,18 @@ const WeeklyMenu = ({ onBack }) => {
       return newWeekNumber;
     });
   };
+
+  const handleAddMealPress = () => {
+    setShowMenu(true); // Show Menu component when "+Add meal" is pressed
+  };
+
+  const handleMenuBack = () => {
+    setShowMenu(false); // Go back to WeeklyMenu from Menu
+  };
+
+  if (showMenu) {
+    return <Menu onBack={handleMenuBack} />; // Render Menu if showMenu is true
+  }
 
   return (
     <View style={styles.overlay}>
@@ -94,30 +104,30 @@ const WeeklyMenu = ({ onBack }) => {
       {selectedDay && mealsPerWeek[weekNumber] && (
         <View style={styles.mealContainer}>
           <View style={styles.mealColumn}>
-            <Text style={styles.mealText}>Frukost</Text>
-            <View style={styles.mealBox}>
+            <Text style={styles.mealText}>Breakfast</Text>
+            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
               <Text style={styles.mealBoxText}>
                 {mealsPerWeek[weekNumber][selectedDay]?.breakfast || '+Add meal'}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.mealColumn}>
             <Text style={styles.mealText}>Lunch</Text>
-            <View style={styles.mealBox}>
+            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
               <Text style={styles.mealBoxText}>
                 {mealsPerWeek[weekNumber][selectedDay]?.lunch || '+Add meal'}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.mealColumn}>
-            <Text style={styles.mealText}>Middag</Text>
-            <View style={styles.mealBox}>
+            <Text style={styles.mealText}>Dinner</Text>
+            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
               <Text style={styles.mealBoxText}>
                 {mealsPerWeek[weekNumber][selectedDay]?.dinner || '+Add meal'}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       )}
