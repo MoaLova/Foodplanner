@@ -3,7 +3,7 @@ import { Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
 import WeeklyMenu from './Weeklymenu';
 
-const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
+const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
   const [details, setDetails] = useState('');
   const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
@@ -32,7 +32,7 @@ const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
   };
 
   if (showWeeklyMenu) {
-    return <WeeklyMenu onBack={handleWeeklyMenuBack} />; // Render Menu if showMenu is true
+    return <WeeklyMenu onBack={handleWeeklyMenuBack} selectedRecipe={recipe} />;  // Pass the recipe to WeeklyMenu
   }
 
   return (
