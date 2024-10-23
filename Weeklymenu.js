@@ -3,11 +3,12 @@ import { Text, View, TouchableOpacity } from 'react-native';
 import Menu from './Menu'; // Import the Menu component
 import styles from './Styles/WeeklyMenuStyles';
 
-const WeeklyMenu = ({ onBack }) => {
+const WeeklyMenu = ({ onBack, selectedRecipe }) => {  // Accept selectedRecipe as a prop
   const currentMonth = 'January';
   const nextMonth = 'February';
   const [weekNumber, setWeekNumber] = useState(1);
   const [showMenu, setShowMenu] = useState(false); // State to toggle Menu component
+  const [selectedMealType, setSelectedMealType] = useState(null); // Track which meal type (breakfast, lunch, dinner) is being edited
   const dateRanges = [
     { start: 1, end: 7 },
     { start: 8, end: 14 },
@@ -56,8 +57,20 @@ const WeeklyMenu = ({ onBack }) => {
     });
   };
 
-  const handleAddMealPress = () => {
-    setShowMenu(true); // Show Menu component when "+Add meal" is pressed
+  const handleAddMealPress = (mealType) => {
+    if (selectedRecipe) {
+      setMealsPerWeek((prevMeals) => ({
+        ...prevMeals,
+        [weekNumber]: {
+          ...prevMeals[weekNumber],
+          [selectedDay]: {
+            ...prevMeals[weekNumber][selectedDay],
+            [mealType]: selectedRecipe, // Assign the recipe to the selected meal type
+          },
+        },
+      }));
+    }
+    setSelectedMealType(mealType);
   };
 
   const handleMenuBack = () => {
@@ -103,30 +116,66 @@ const WeeklyMenu = ({ onBack }) => {
 
       {selectedDay && mealsPerWeek[weekNumber] && (
         <View style={styles.mealContainer}>
+          {/* Breakfast */}
           <View style={styles.mealColumn}>
             <Text style={styles.mealText}>Breakfast</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
-              <Text style={styles.mealBoxText}>
-                {mealsPerWeek[weekNumber][selectedDay]?.breakfast || '+Add meal'}
-              </Text>
+            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('breakfast')}>
+              {mealsPerWeek[weekNumber][selectedDay]?.breakfast ? (
+                <View style={styles.textContainer}>
+                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].breakfast.title}</Text>
+                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].breakfast.readyInMinutes} minutes</Text>
+                  <Text style={styles.recipeInfo}>
+                    Category: {mealsPerWeek[weekNumber][selectedDay].breakfast.dishTypes?.join(', ') || 'Not available'}
+                  </Text>
+                  <Text style={styles.recipeInfo}>
+                    Diet: {mealsPerWeek[weekNumber][selectedDay].breakfast.diets?.join(', ') || 'No specific diet'}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.mealBoxText}>+Add meal</Text>
+              )}
             </TouchableOpacity>
           </View>
 
+          {/* Lunch */}
           <View style={styles.mealColumn}>
             <Text style={styles.mealText}>Lunch</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
-              <Text style={styles.mealBoxText}>
-                {mealsPerWeek[weekNumber][selectedDay]?.lunch || '+Add meal'}
-              </Text>
+            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('lunch')}>
+              {mealsPerWeek[weekNumber][selectedDay]?.lunch ? (
+                <View style={styles.textContainer}>
+                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].lunch.title}</Text>
+                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].lunch.readyInMinutes} minutes</Text>
+                  <Text style={styles.recipeInfo}>
+                    Category: {mealsPerWeek[weekNumber][selectedDay].lunch.dishTypes?.join(', ') || 'Not available'}
+                  </Text>
+                  <Text style={styles.recipeInfo}>
+                    Diet: {mealsPerWeek[weekNumber][selectedDay].lunch.diets?.join(', ') || 'No specific diet'}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.mealBoxText}>+Add meal</Text>
+              )}
             </TouchableOpacity>
           </View>
 
+          {/* Dinner */}
           <View style={styles.mealColumn}>
             <Text style={styles.mealText}>Dinner</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={handleAddMealPress}>
-              <Text style={styles.mealBoxText}>
-                {mealsPerWeek[weekNumber][selectedDay]?.dinner || '+Add meal'}
-              </Text>
+            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('dinner')}>
+              {mealsPerWeek[weekNumber][selectedDay]?.dinner ? (
+                <View style={styles.textContainer}>
+                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].dinner.title}</Text>
+                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].dinner.readyInMinutes} minutes</Text>
+                  <Text style={styles.recipeInfo}>
+                    Category: {mealsPerWeek[weekNumber][selectedDay].dinner.dishTypes?.join(', ') || 'Not available'}
+                  </Text>
+                  <Text style={styles.recipeInfo}>
+                    Diet: {mealsPerWeek[weekNumber][selectedDay].dinner.diets?.join(', ') || 'No specific diet'}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.mealBoxText}>+Add meal</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

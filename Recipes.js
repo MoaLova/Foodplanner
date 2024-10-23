@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
+import WeeklyMenu from './Weeklymenu';
 
-const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
+const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
   const [details, setDetails] = useState('');
+  const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
   // Visa ingredienser
   const changeToIngredients = () => {
@@ -21,6 +23,18 @@ const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
     setDetails(`Instructions:\n${instructionsList}`);
   };
 
+  const handleAddToMenuPress = () => {
+    setShowWeeklyMenu(true); // Show WeeklyMenu component when "Add to Menu" is pressed
+  };
+
+  const handleWeeklyMenuBack = () => {
+    setShowWeeklyMenu(false); // Go back to Recipes from WeeklyMenu
+  };
+
+  if (showWeeklyMenu) {
+    return <WeeklyMenu onBack={handleWeeklyMenuBack} selectedRecipe={recipe} />;  // Pass the recipe to WeeklyMenu
+  }
+
   return (
     <View style={styles.container}>
       {/* Top-right corner buttons */}
@@ -28,7 +42,7 @@ const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
         <TouchableOpacity style={styles.topButton} onPress={onSaveRecipe}>
           <Text style={styles.topButtonText}>Save Recipe</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.topButton} onPress={onAddToMenu}>
+        <TouchableOpacity style={styles.topButton} onPress={handleAddToMenuPress}>
           <Text style={styles.topButtonText}>Add to Menu</Text>
         </TouchableOpacity>
       </View>
