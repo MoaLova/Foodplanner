@@ -1,28 +1,80 @@
-import React, { useState } from 'react';
-import { RecipeContainer, RecipeCard, RecipeTitle, RecipeButton } from './SavedRecipesStyle';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import styles from './Styles/MenuStyle'; // Använder samma stil som Menu
 
-const SavedRecipes = () => {
-  const [recipes, setRecipes] = useState([
-    { id: 1, title: 'Spaghetti Carbonara', description: 'A delicious Italian pasta dish.' },
-    { id: 2, title: 'Chicken Tikka Masala', description: 'A flavorful Indian chicken curry.' },
-    { id: 3, title: 'Sushi Rolls', description: 'Homemade sushi with fresh ingredients.' },
-  ]);
+const SavedRecipes = ({ onBack }) => {
+  const [savedRecipes, setSavedRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const deleteRecipe = (id) => {
-    setRecipes(recipes.filter(recipe => recipe.id !== id));
-  };
+  useEffect(() => {
+    // Simulerad hämtning av sparade recept (ersätt med faktisk hämtning om nödvändigt)
+    const fetchSavedRecipes = async () => {
+      try {
+        setLoading(true);
+        
+        // Här ska du hämta sparade recept från AsyncStorage eller API (exempelvis från lokal lagring)
+        const savedRecipesFromStorage = []; // Byt ut detta mot din faktiska lagringsmetod
+        
+        if (savedRecipesFromStorage.length > 0) {
+          setSavedRecipes(savedRecipesFromStorage);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        setError('Could not load saved recipes. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchSavedRecipes();
+  }, []);
+
+  const renderRecipeItem = ({ item }) => (
+    <TouchableOpacity>
+      <View style={styles.recipeCard} key={item.id}>
+        <View style={styles.recipeInfo}>
+          <Text style={styles.recipeTitle}>{item.title}</Text>
+          <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+          {item.dishTypes && item.dishTypes.length > 0 && (
+            <Text style={styles.recipeDishTypes}>
+              Måltidstyper: {item.dishTypes.join(', ')}
+            </Text>
+          )}
+          {item.diets && item.diets.length > 0 && (
+            <Text style={styles.recipeAllergies}>
+              Allergier: {item.diets.join(', ')}
+            </Text>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <RecipeContainer>
-      <h1>Saved Recipes</h1>
-      {recipes.map((recipe) => (
-        <RecipeCard key={recipe.id}>
-          <RecipeTitle>{recipe.title}</RecipeTitle>
-          <p>{recipe.description}</p>
-          <RecipeButton onClick={() => deleteRecipe(recipe.id)}>Delete</RecipeButton>
-        </RecipeCard>
-      ))}
-    </RecipeContainer>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+          <Text style={styles.text}>Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.heading}>Saved Recipes</Text>
+      </View>
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : savedRecipes.length === 0 ? (
+        <Text style={styles.noDataText}>You have no saved recipes.</Text>
+      ) : (
+        <FlatList
+          data={savedRecipes}
+          renderItem={renderRecipeItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.flatListContent}
+        />
+      )}
+    </View>
   );
 };
 

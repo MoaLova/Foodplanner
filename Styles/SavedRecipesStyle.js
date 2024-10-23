@@ -1,39 +1,77 @@
-import styled from 'styled-components';
+import { StyleSheet, Dimensions } from 'react-native';
 
-export const RecipeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f8f8f8;
-  padding: 20px;
-`;
+const { width } = Dimensions.get('window');
 
-export const RecipeCard = styled.div`
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
-  width: 300px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-`;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    width: '100%',
+  },
+  heading: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: 'black',
+    marginHorizontal: 20,
+    flex: 1,
+    textAlign: 'center',
+  },
+  recipeCard: {
+    flexDirection: 'row',
+    backgroundColor: '#e0e0e0',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 15,
+    width: width * 0.9,
+    minHeight: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom: 10,
+  },
+  recipeTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  recipeDetails: {
+    fontSize: 14,
+    color: '#666',
+  },
+  flatListContent: {
+    paddingBottom: 30,
+  },
+  backButton: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    zIndex: 10,
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  noDataText: {
+    fontSize: 18,
+    color: 'black',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+});
 
-export const RecipeTitle = styled.h2`
-  font-size: 1.5em;
-  color: #333;
-  margin-bottom: 10px;
-`;
-
-export const RecipeButton = styled.button`
-  background-color: #ff6347;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-
-  &:hover {
-    background-color: #ff4500;
-  }
-`;
+export default styles;
