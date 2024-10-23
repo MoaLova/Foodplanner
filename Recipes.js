@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
 
 const Recipes = ({ recipe, onBack }) => {
   const [details, setDetails] = useState('');
 
+  // Visa ingredienser
   const changeToIngredients = () => {
-    const ingredientsList = recipe.ingredients
-      ? recipe.ingredients.map((ingredient, index) => `${index + 1}. ${ingredient}`).join('\n')
+    const ingredientsList = recipe.extendedIngredients
+      ? recipe.extendedIngredients.map((ingredient, index) => `${index + 1}. ${ingredient.original}`).join('\n')
       : 'No ingredients available.';
     setDetails(`Ingredients:\n${ingredientsList}`);
   };
 
+  // Visa instruktioner
   const changeToInstructions = () => {
-    const instructionsList = recipe.instructions
-      ? recipe.instructions.join('\n')
+    const instructionsList = recipe.analyzedInstructions && recipe.analyzedInstructions.length > 0
+      ? recipe.analyzedInstructions[0].steps.map((step, index) => `${index + 1}. ${step.step}`).join('\n')
       : 'No instructions available.';
     setDetails(`Instructions:\n${instructionsList}`);
   };
@@ -22,19 +24,22 @@ const Recipes = ({ recipe, onBack }) => {
   return (
     <View style={styles.container}>
       <View style={styles.contentBox}>
+        {/* Receptbild */}
         <View style={styles.recipeContainer}>
           <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
 
           <View style={styles.textContainer}>
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
             <Text style={styles.recipeInfo}>{recipe.readyInMinutes} minutes</Text>
-            <Text style={styles.recipeInfo}>Category: {recipe.category || 'Lunch'}</Text>
-            <Text style={styles.recipeInfo}>{recipe.diet || 'Lactose-free'}</Text>
+            <Text style={styles.recipeInfo}>Category: {recipe.dishTypes ? recipe.dishTypes.join(', ') : 'Not available'}</Text>
+            <Text style={styles.recipeInfo}>Diet: {recipe.diets ? recipe.diets.join(', ') : 'No specific diet'}</Text>
           </View>
         </View>
 
-        <Text style={styles.recipeText}>{recipe.description || 'This is a detailed description of the recipe.'}</Text>
+        {/* Receptbeskrivning */}
+        <Text style={styles.recipeText}>{recipe.summary.replace(/<[^>]*>?/gm, '') || 'No description available.'}</Text>
 
+        {/* Knappar för Ingredienser och Instruktioner */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
             <Text style={styles.buttonText}>Ingredients</Text>
@@ -44,8 +49,10 @@ const Recipes = ({ recipe, onBack }) => {
           </TouchableOpacity>
         </View>
 
+        {/* Visa ingredienser eller instruktioner */}
         <Text style={styles.detailsText}>{details || 'Select Ingredients or Instructions to view details.'}</Text>
 
+        {/* Tillbaka-knapp */}
         <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>

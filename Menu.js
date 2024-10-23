@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { SPOONACULAR_API_KEY } from '@env';
+import { SPOONACULAR_API_KEY } from '@env';  // API nyckel
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
-import Recipes from './Recipes';  // Import Recipes Component
+import Recipes from './Recipes';  // Importera Recipes Component
 
 const Menu = ({ onBack }) => {
   const [recipes, setRecipes] = useState([]);
@@ -12,7 +12,7 @@ const Menu = ({ onBack }) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRecipe, setSelectedRecipe] = useState(null);  // New state for selected recipe
+  const [selectedRecipe, setSelectedRecipe] = useState(null);  // Ny state för valt recept
 
   const fetchRecipes = async (pageNumber = 1, search = '') => {
     try {
@@ -43,12 +43,29 @@ const Menu = ({ onBack }) => {
     }
   };
 
+  // Nytt: Hämta detaljer om ett specifikt recept från Spoonacular API
+  const fetchRecipeDetails = async (recipeId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`
+      );
+      const recipeDetails = await response.json();
+      setSelectedRecipe(recipeDetails);  // Sätt det hämtade receptet som valt recept
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching recipe details:', error);
+      setError('Could not load recipe details.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchRecipes();
   }, []);
 
   const renderRecipeItem = ({ item }) => (
-    <TouchableOpacity onPress={() => setSelectedRecipe(item)}>  {/* Set selected recipe */}
+    <TouchableOpacity onPress={() => fetchRecipeDetails(item.id)}>  {/* Hämta receptdetaljer */}
       <View style={styles.recipeCard} key={item.id}>
         <Image source={{ uri: item.image }} style={styles.recipeImage} />
         <View style={styles.recipeInfo}>
@@ -60,7 +77,7 @@ const Menu = ({ onBack }) => {
   );
 
   if (selectedRecipe) {
-    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;  // Navigate to Recipes
+    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;  // Skicka valt recept
   }
 
   return (
@@ -77,7 +94,7 @@ const Menu = ({ onBack }) => {
         placeholder="Search for recipes..."
         value={searchTerm}
         onChangeText={setSearchTerm}
-        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Trigger search
+        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Sökning
       />
 
       {loading ? (
