@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
 
-const Recipes = ({ recipe, onBack }) => {
+const Recipes = ({ recipe, onBack, onSaveRecipe, onAddToMenu }) => {
   const [details, setDetails] = useState('');
 
   // Visa ingredienser
@@ -23,6 +23,16 @@ const Recipes = ({ recipe, onBack }) => {
 
   return (
     <View style={styles.container}>
+      {/* Top-right corner buttons */}
+      <View style={styles.topRightButtonsContainer}>
+        <TouchableOpacity style={styles.topButton} onPress={onSaveRecipe}>
+          <Text style={styles.topButtonText}>Save Recipe</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.topButton} onPress={onAddToMenu}>
+          <Text style={styles.topButtonText}>Add to Menu</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.contentBox}>
         {/* Receptbild */}
         <View style={styles.recipeContainer}>
