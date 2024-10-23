@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import styles from './Styles/AppStyle';
 import WeeklyMenu from './Weeklymenu'; // Correct path to your components
-import Recipes from './Recipes';  // Ensure this is the correct import for Recipes
+import SavedRecipes from './SavedRecipes';  // Ensure this is the correct import for SavedRecipes
 import Menu from './Menu';  // Ensure this matches the file name and path
 
 const App = () => {
@@ -20,12 +20,12 @@ const App = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.heading}>Foodplanner</Text>
 
-        {/* Recipes button */}
+        {/* Saved Recipes button (Updated to SavedRecipes) */}
         <TouchableOpacity
           style={styles.box}
-          onPress={() => setActiveView('recipes')} // Corrected to 'recipes'
+          onPress={() => setActiveView('savedRecipes')} // Change view to 'savedRecipes'
         >
-          <Text style={styles.text}>Recipes</Text>
+          <Text style={styles.text}>Saved Recipes</Text>
         </TouchableOpacity>
 
         {/* Weekly Menu button */}
@@ -51,8 +51,8 @@ const App = () => {
   // Conditional Rendering of the Active View
   const renderActiveView = () => {
     switch (activeView) {
-      case 'recipes': // Corrected to 'recipes'
-        return <Recipes />;
+      case 'savedRecipes': // Updated to 'savedRecipes'
+        return <SavedRecipes />; // Render SavedRecipes component
       case 'weeklyMenu':
         return <WeeklyMenu />;
       case 'menu':
@@ -71,7 +71,7 @@ const App = () => {
         style={styles.background}
         resizeMode="cover"
       >
-        {/* Conditionally render home, weekly menu, or recipes */}
+        {/* Conditionally render home, weekly menu, or saved recipes */}
         {activeView === 'home' ? (
           renderHome()
         ) : activeView === 'weeklyMenu' ? (
@@ -79,7 +79,7 @@ const App = () => {
         ) : activeView === 'menu' ? ( // Add this check for the 'menu' view
           <Menu onBack={() => setActiveView('home')} /> // Render Menu component
         ) : (
-          <Recipes onBack={() => setActiveView('home')} /> // Add rendering for Recipes component
+          <SavedRecipes onBack={() => setActiveView('home')} /> // Add rendering for SavedRecipes component
         )}
       </ImageBackground>
     </View>
