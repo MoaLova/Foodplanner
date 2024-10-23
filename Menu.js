@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { SPOONACULAR_API_KEY } from '@env';
-import { View, TextInput, Text, Image, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
+import Recipes from './Recipes';  // Import Recipes Component
 
 const Menu = ({ onBack }) => {
   const [recipes, setRecipes] = useState([]);
@@ -10,12 +11,12 @@ const Menu = ({ onBack }) => {
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // State for search input
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRecipe, setSelectedRecipe] = useState(null);  // New state for selected recipe
 
-  // Fetch recipes based on search term
   const fetchRecipes = async (pageNumber = 1, search = '') => {
     try {
-      setLoading(pageNumber === 1); 
+      setLoading(pageNumber === 1);
       setLoadingMore(pageNumber > 1);
       setError(null);
 
@@ -43,15 +44,11 @@ const Menu = ({ onBack }) => {
   };
 
   useEffect(() => {
-    fetchRecipes(); // Initial load
+    fetchRecipes();
   }, []);
 
-  const handleBack = () => {
-    onBack();  // Use onBack here to trigger the parent function
-  };
-
   const renderRecipeItem = ({ item }) => (
-    <TouchableOpacity onPress={() => console.log('Recipe Selected: ', item.id)}>
+    <TouchableOpacity onPress={() => setSelectedRecipe(item)}>  {/* Set selected recipe */}
       <View style={styles.recipeCard} key={item.id}>
         <Image source={{ uri: item.image }} style={styles.recipeImage} />
         <View style={styles.recipeInfo}>
@@ -62,28 +59,14 @@ const Menu = ({ onBack }) => {
     </TouchableOpacity>
   );
 
-  const loadMoreRecipes = () => {
-    if (!loadingMore && hasMoreData) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      fetchRecipes(nextPage, searchTerm); // Pass search term for next page
-    }
-  };
-
-  const handleSearch = () => {
-    setPage(1); // Reset to first page for new search
-    fetchRecipes(1, searchTerm); // Fetch recipes based on search term
-  };
-
-  const renderFooter = () => {
-    if (!loadingMore) return null;
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  };
+  if (selectedRecipe) {
+    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;  // Navigate to Recipes
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <TouchableOpacity onPress={onBack} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.heading}>Menu</Text>
@@ -94,7 +77,7 @@ const Menu = ({ onBack }) => {
         placeholder="Search for recipes..."
         value={searchTerm}
         onChangeText={setSearchTerm}
-        onSubmitEditing={handleSearch} // Trigger search when "enter" is pressed
+        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Trigger search
       />
 
       {loading ? (
@@ -110,10 +93,13 @@ const Menu = ({ onBack }) => {
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.flatListContent}
           initialNumToRender={3}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          onEndReached={loadMoreRecipes}
+          onEndReached={() => {
+            if (hasMoreData && !loadingMore) {
+              setPage(page + 1);
+              fetchRecipes(page + 1, searchTerm);
+            }
+          }}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
         />
       )}
     </View>
