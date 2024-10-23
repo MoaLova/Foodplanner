@@ -68,6 +68,28 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     fontSize: 16,
   },
+
+  // Styles for the new top-right buttons
+  topRightButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  topButton: {
+    backgroundColor: '#28A745', // You can choose different colors for each button
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginLeft: 10,
+    borderRadius: 5,
+  },
+  topButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
