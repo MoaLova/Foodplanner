@@ -12,7 +12,7 @@ const Menu = ({ onBack }) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRecipe, setSelectedRecipe] = useState(null);  // Ny state för valt recept
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const fetchRecipes = async (pageNumber = 1, search = '') => {
     try {
@@ -21,7 +21,7 @@ const Menu = ({ onBack }) => {
       setError(null);
 
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}`
+        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}&addRecipeInformation=true`
       );
 
       const data = await response.json();
@@ -43,7 +43,6 @@ const Menu = ({ onBack }) => {
     }
   };
 
-  // Nytt: Hämta detaljer om ett specifikt recept från Spoonacular API
   const fetchRecipeDetails = async (recipeId) => {
     try {
       setLoading(true);
@@ -51,7 +50,7 @@ const Menu = ({ onBack }) => {
         `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`
       );
       const recipeDetails = await response.json();
-      setSelectedRecipe(recipeDetails);  // Sätt det hämtade receptet som valt recept
+      setSelectedRecipe(recipeDetails);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching recipe details:', error);
@@ -65,19 +64,31 @@ const Menu = ({ onBack }) => {
   }, []);
 
   const renderRecipeItem = ({ item }) => (
-    <TouchableOpacity onPress={() => fetchRecipeDetails(item.id)}>  {/* Hämta receptdetaljer */}
+    <TouchableOpacity onPress={() => fetchRecipeDetails(item.id)}>
       <View style={styles.recipeCard} key={item.id}>
         <Image source={{ uri: item.image }} style={styles.recipeImage} />
         <View style={styles.recipeInfo}>
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+          {/* Visa måltidstyper */}
+          {item.dishTypes && item.dishTypes.length > 0 && (
+            <Text style={styles.recipeDishTypes}>
+              Måltidstyper: {item.dishTypes.join(', ')}
+            </Text>
+          )}
+          {/* Visa allergier */}
+          {item.diets && item.diets.length > 0 && (
+            <Text style={styles.recipeAllergies}>
+              Allergier: {item.diets.join(', ')}
+            </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
   );
 
   if (selectedRecipe) {
-    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;  // Skicka valt recept
+    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;
   }
 
   return (

@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { width } = Dimensions.get('window');  // Get the width here
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -25,12 +25,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
-  },
   searchInput: {
     flex: 1,
     borderWidth: 1,
@@ -42,20 +36,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: 50,
   },
-  filterButton: {
-    backgroundColor: '#2196F3',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 50,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   recipeCard: {
     flexDirection: 'row',
     backgroundColor: 'lightgrey',
@@ -63,7 +43,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderRadius: 10,
     padding: 15,
-    width: width * 0.95,  // Now this will work
+    width: width * 0.95,
     minHeight: 100,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -72,7 +52,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   recipeImage: {
-    width: width * 0.2,  // This also works because 'width' is defined above
+    width: width * 0.2,
     height: width * 0.2,
     borderRadius: 10,
     marginRight: 15,
@@ -89,11 +69,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'black',
   },
+  recipeDishTypes: {
+    fontSize: 12,
+    color: 'black',
+    marginTop: 5,
+  },
+  recipeAllergies: {
+    fontSize: 12,
+    color: 'red',
+    marginTop: 5,
+  },
   flatListContent: {
     paddingBottom: 30,
-  },
-  separator: {
-    height: 10,
   },
   backButton: {
     backgroundColor: 'white',
