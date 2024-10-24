@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import styles from './Styles/MenuStyle'; // Using the same style as Menu
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from './Styles/MenuStyle';
 
 const SavedRecipes = ({ navigation }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -8,21 +9,17 @@ const SavedRecipes = ({ navigation }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulated fetching of saved recipes (replace with actual fetching if needed)
+    // Fetch saved recipes from AsyncStorage
     const fetchSavedRecipes = async () => {
       try {
         setLoading(true);
-        
-        // Here, you should fetch saved recipes from AsyncStorage or API (e.g., local storage)
-        const savedRecipesFromStorage = []; // Replace this with your actual storage method
-        
-        if (savedRecipesFromStorage.length > 0) {
-          setSavedRecipes(savedRecipesFromStorage);
-        }
-        
+        const savedRecipesJson = await AsyncStorage.getItem('savedRecipes');
+        const savedRecipesData = savedRecipesJson ? JSON.parse(savedRecipesJson) : [];
+        setSavedRecipes(savedRecipesData);
         setLoading(false);
       } catch (error) {
-        setError('Could not load saved recipes. Please try again later.');
+        console.error('Error fetching saved recipes:', error);
+        setError('Could not load saved recipes.');
         setLoading(false);
       }
     };
@@ -54,7 +51,6 @@ const SavedRecipes = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {/* Use navigation.goBack() for back navigation */}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
