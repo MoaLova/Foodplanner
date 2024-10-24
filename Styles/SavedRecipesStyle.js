@@ -50,6 +50,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+  deleteButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   flatListContent: {
     paddingBottom: 30,
   },
