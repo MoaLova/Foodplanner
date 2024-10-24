@@ -70,7 +70,11 @@ const WeeklyMenu = ({ route, navigation }) => {
   };
 
   const handleAddMealPress = (mealType) => {
-    if (!selectedRecipe) {
+    if (mealsPerWeek[weekNumber] && mealsPerWeek[weekNumber][selectedDay]?.[mealType]) {
+      // If the meal slot is already filled, navigate to Recipes.js with the existing recipe info
+      const existingRecipe = mealsPerWeek[weekNumber][selectedDay][mealType];
+      navigation.navigate('Recipes', { recipe: existingRecipe });  // Pass the existing recipe
+    } else if (!selectedRecipe) {
       // If no recipe is passed, navigate to the Menu.js to select one
       navigation.navigate('Menu');
     } else if (selectedRecipe && selectedDay) {
@@ -85,7 +89,7 @@ const WeeklyMenu = ({ route, navigation }) => {
           },
         },
       };
-
+  
       setMealsPerWeek(updatedMeals);
       saveMealsToStorage(updatedMeals);  // Save updated meals to AsyncStorage
     }
