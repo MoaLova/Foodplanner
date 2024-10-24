@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { SPOONACULAR_API_KEY } from '@env';  // API nyckel
+import { SPOONACULAR_API_KEY } from '@env';  // API key
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
-import Recipes from './Recipes';  // Importera Recipes Component
 
-const Menu = ({ onBack }) => {
+const Menu = ({ navigation }) => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -12,7 +11,6 @@ const Menu = ({ onBack }) => {
   const [hasMoreData, setHasMoreData] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const fetchRecipes = async (pageNumber = 1, search = '') => {
     try {
@@ -50,7 +48,10 @@ const Menu = ({ onBack }) => {
         `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`
       );
       const recipeDetails = await response.json();
-      setSelectedRecipe(recipeDetails);
+      
+      // Navigate to the Recipes screen and pass the recipe details as parameters
+      navigation.navigate('Recipes', { recipe: recipeDetails });
+
       setLoading(false);
     } catch (error) {
       console.error('Error fetching recipe details:', error);
@@ -70,16 +71,16 @@ const Menu = ({ onBack }) => {
         <View style={styles.recipeInfo}>
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
-          {/* Visa måltidstyper */}
+          {/* Display dish types */}
           {item.dishTypes && item.dishTypes.length > 0 && (
             <Text style={styles.recipeDishTypes}>
               Måltidstyper: {item.dishTypes.join(', ')}
             </Text>
           )}
-          {/* Visa allergier */}
+          {/* Display allergies */}
           {item.diets && item.diets.length > 0 && (
             <Text style={styles.recipeAllergies}>
-              Allergier: {item.diets.join(', ')}
+              Allergies: {item.diets.join(', ')}
             </Text>
           )}
         </View>
@@ -87,14 +88,10 @@ const Menu = ({ onBack }) => {
     </TouchableOpacity>
   );
 
-  if (selectedRecipe) {
-    return <Recipes recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.heading}>Menu</Text>
@@ -105,7 +102,7 @@ const Menu = ({ onBack }) => {
         placeholder="Search for recipes..."
         value={searchTerm}
         onChangeText={setSearchTerm}
-        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Sökning
+        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Search
       />
 
       {loading ? (

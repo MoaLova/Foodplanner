@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 import styles from './Styles/RecipesStyle';
-import WeeklyMenu from './Weeklymenu';
 
-const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
+const Recipes = ({ route, navigation }) => {
+  const { recipe } = route.params;  // Get the recipe passed as a parameter via navigation
   const [details, setDetails] = useState('');
-  const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
-  // Visa ingredienser
+  // Display ingredients
   const changeToIngredients = () => {
     const ingredientsList = recipe.extendedIngredients
       ? recipe.extendedIngredients.map((ingredient, index) => `${index + 1}. ${ingredient.original}`).join('\n')
@@ -15,7 +14,7 @@ const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
     setDetails(`Ingredients:\n${ingredientsList}`);
   };
 
-  // Visa instruktioner
+  // Display instructions
   const changeToInstructions = () => {
     const instructionsList = recipe.analyzedInstructions && recipe.analyzedInstructions.length > 0
       ? recipe.analyzedInstructions[0].steps.map((step, index) => `${index + 1}. ${step.step}`).join('\n')
@@ -24,22 +23,14 @@ const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
   };
 
   const handleAddToMenuPress = () => {
-    setShowWeeklyMenu(true); // Show WeeklyMenu component when "Add to Menu" is pressed
+    navigation.navigate('WeeklyMenu', { selectedRecipe: recipe });  // Navigate to WeeklyMenu, passing the recipe
   };
-
-  const handleWeeklyMenuBack = () => {
-    setShowWeeklyMenu(false); // Go back to Recipes from WeeklyMenu
-  };
-
-  if (showWeeklyMenu) {
-    return <WeeklyMenu onBack={handleWeeklyMenuBack} selectedRecipe={recipe} />;  // Pass the recipe to WeeklyMenu
-  }
 
   return (
     <View style={styles.container}>
       {/* Top-right corner buttons */}
       <View style={styles.topRightButtonsContainer}>
-        <TouchableOpacity style={styles.topButton} onPress={onSaveRecipe}>
+        <TouchableOpacity style={styles.topButton} onPress={() => console.log('Recipe saved!')}>
           <Text style={styles.topButtonText}>Save Recipe</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.topButton} onPress={handleAddToMenuPress}>
@@ -48,10 +39,9 @@ const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
       </View>
 
       <View style={styles.contentBox}>
-        {/* Receptbild */}
+        {/* Recipe image */}
         <View style={styles.recipeContainer}>
           <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
-
           <View style={styles.textContainer}>
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
             <Text style={styles.recipeInfo}>{recipe.readyInMinutes} minutes</Text>
@@ -60,10 +50,12 @@ const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
           </View>
         </View>
 
-        {/* Receptbeskrivning */}
-        <Text style={styles.recipeText}>{recipe.summary.replace(/<[^>]*>?/gm, '') || 'No description available.'}</Text>
+        {/* Recipe description */}
+        <Text style={styles.recipeText}>
+          {recipe.summary.replace(/<[^>]*>?/gm, '') || 'No description available.'}
+        </Text>
 
-        {/* Knappar för Ingredienser och Instruktioner */}
+        {/* Buttons for Ingredients and Instructions */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
             <Text style={styles.buttonText}>Ingredients</Text>
@@ -73,11 +65,13 @@ const Recipes = ({ recipe, onBack, onSaveRecipe}) => {
           </TouchableOpacity>
         </View>
 
-        {/* Visa ingredienser eller instruktioner */}
-        <Text style={styles.detailsText}>{details || 'Select Ingredients or Instructions to view details.'}</Text>
+        {/* Display ingredients or instructions */}
+        <Text style={styles.detailsText}>
+          {details || 'Select Ingredients or Instructions to view details.'}
+        </Text>
 
-        {/* Tillbaka-knapp */}
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        {/* Back button */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
       </View>
