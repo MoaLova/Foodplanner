@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import styles from './Styles/MenuStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,23 +41,26 @@ const SavedRecipes = ({ navigation }) => {
 
   const renderRecipeItem = ({ item }) => (
     <View style={styles.recipeCard}>
-      <TouchableOpacity
-        style={styles.recipeInfo}
-        onPress={() => navigation.navigate('Recipes', { recipe: item })} // Navigate to Recipes screen with the clicked recipe
-      >
-        <Text style={styles.recipeTitle}>{item.title}</Text>
-        <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
-        {item.dishTypes && item.dishTypes.length > 0 && (
-          <Text style={styles.recipeDishTypes}>
-            Måltidstyper: {item.dishTypes.join(', ')}
-          </Text>
-        )}
-        {item.diets && item.diets.length > 0 && (
-          <Text style={styles.recipeAllergies}>
-            Allergier: {item.diets.join(', ')}
-          </Text>
-        )}
-      </TouchableOpacity>
+      <Image source={{ uri: item.image }} style={styles.recipeImage} /> {/* Added Image Component */}
+      
+      <View style={styles.recipeInfo}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Recipes', { recipe: item })} // Navigate to Recipes screen with the clicked recipe
+        >
+          <Text style={styles.recipeTitle}>{item.title}</Text>
+          <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+          {item.dishTypes && item.dishTypes.length > 0 && (
+            <Text style={styles.recipeDishTypes}>
+              Måltidstyper: {item.dishTypes.join(', ')}
+            </Text>
+          )}
+          {item.diets && item.diets.length > 0 && (
+            <Text style={styles.recipeAllergies}>
+              Allergier: {item.diets.join(', ')}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
 
       {/* Delete Button */}
       <TouchableOpacity

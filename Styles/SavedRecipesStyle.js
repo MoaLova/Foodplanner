@@ -41,6 +41,12 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 10,
   },
+  recipeImage: {
+    width: 80,  // Anpassa bildens bredd
+    height: 80, // Anpassa bildens höjd
+    borderRadius: 10,
+    marginRight: 10,
+  },
   recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
