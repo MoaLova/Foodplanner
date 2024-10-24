@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginRight: 10,
     backgroundColor: '#fff',
-    height: 20,
+    height: 50,
   },
   recipeCard: {
     flexDirection: 'row',
