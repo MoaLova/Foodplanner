@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -29,17 +29,22 @@ const SavedRecipes = ({ navigation }) => {
   // Function to delete a recipe
   const deleteRecipe = async (recipeId) => {
     try {
-      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId);
-      setSavedRecipes(updatedRecipes);
-      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
+      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId); // Remove recipe from the list
+      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes)); // Update AsyncStorage
+      setSavedRecipes(updatedRecipes); // Update state
+      Alert.alert('Recipe deleted!');
     } catch (error) {
       console.error('Error deleting recipe:', error);
+      Alert.alert('Failed to delete recipe.');
     }
   };
 
   const renderRecipeItem = ({ item }) => (
-    <View style={styles.recipeCard} key={item.id}>
-      <View style={styles.recipeInfo}>
+    <View style={styles.recipeCard}>
+      <TouchableOpacity
+        style={styles.recipeInfo}
+        onPress={() => navigation.navigate('Recipes', { recipe: item })} // Navigate to Recipes screen with the clicked recipe
+      >
         <Text style={styles.recipeTitle}>{item.title}</Text>
         <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
         {item.dishTypes && item.dishTypes.length > 0 && (
@@ -52,9 +57,13 @@ const SavedRecipes = ({ navigation }) => {
             Allergier: {item.diets.join(', ')}
           </Text>
         )}
-      </View>
-      {/* Delete button */}
-      <TouchableOpacity onPress={() => deleteRecipe(item.id)} style={styles.deleteButton}>
+      </TouchableOpacity>
+
+      {/* Delete Button */}
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => deleteRecipe(item.id)} // Call delete function on press
+      >
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
     </View>
