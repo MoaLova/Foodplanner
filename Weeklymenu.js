@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import Menu from './Menu'; // Import the Menu component
 import styles from './Styles/WeeklyMenuStyles';
 
-const WeeklyMenu = ({ onBack, selectedRecipe }) => {  // Accept selectedRecipe as a prop
+const WeeklyMenu = ({ route, navigation }) => {  
+  const { selectedRecipe } = route.params || {};  // Get the recipe passed from Recipes.js
   const currentMonth = 'January';
   const nextMonth = 'February';
   const [weekNumber, setWeekNumber] = useState(1);
-  const [showMenu, setShowMenu] = useState(false); // State to toggle Menu component
-  const [selectedMealType, setSelectedMealType] = useState(null); // Track which meal type (breakfast, lunch, dinner) is being edited
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [mealsPerWeek, setMealsPerWeek] = useState({
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+  });
+
   const dateRanges = [
     { start: 1, end: 7 },
     { start: 8, end: 14 },
@@ -18,27 +25,6 @@ const WeeklyMenu = ({ onBack, selectedRecipe }) => {  // Accept selectedRecipe a
   ];
 
   const { start, end, carryOver } = dateRanges[weekNumber - 1];
-  const [selectedDay, setSelectedDay] = useState(start);
-  const [mealsPerWeek, setMealsPerWeek] = useState({
-    1: {},
-    2: {},
-    3: {},
-    4: {},
-    5: {},
-  });
-
-  useEffect(() => {
-    if (!mealsPerWeek[weekNumber]) {
-      const weekData = {};
-      for (let i = start; i <= (carryOver ? 7 : end); i++) {
-        weekData[i] = { breakfast: '', lunch: '', dinner: '' };
-      }
-      setMealsPerWeek((prevMeals) => ({
-        ...prevMeals,
-        [weekNumber]: weekData,
-      }));
-    }
-  }, [weekNumber, mealsPerWeek, start, end, carryOver]);
 
   const handleDayPress = (day) => {
     setSelectedDay(day);
@@ -58,28 +44,23 @@ const WeeklyMenu = ({ onBack, selectedRecipe }) => {  // Accept selectedRecipe a
   };
 
   const handleAddMealPress = (mealType) => {
-    if (selectedRecipe) {
+    if (selectedRecipe && selectedDay) {
       setMealsPerWeek((prevMeals) => ({
         ...prevMeals,
         [weekNumber]: {
           ...prevMeals[weekNumber],
           [selectedDay]: {
             ...prevMeals[weekNumber][selectedDay],
-            [mealType]: selectedRecipe, // Assign the recipe to the selected meal type
+            [mealType]: selectedRecipe,  // Assign the passed recipe to the selected meal
           },
         },
       }));
     }
-    setSelectedMealType(mealType);
   };
 
-  const handleMenuBack = () => {
-    setShowMenu(false); // Go back to WeeklyMenu from Menu
+  const handleBack = () => {
+    navigation.goBack();  // Navigate back to the previous screen
   };
-
-  if (showMenu) {
-    return <Menu onBack={handleMenuBack} />; // Render Menu if showMenu is true
-  }
 
   return (
     <View style={styles.overlay}>
@@ -181,7 +162,7 @@ const WeeklyMenu = ({ onBack, selectedRecipe }) => {  // Accept selectedRecipe a
         </View>
       )}
 
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
+      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
         <Text style={styles.text}>Back</Text>
       </TouchableOpacity>
     </View>

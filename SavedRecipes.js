@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
-import styles from './Styles/MenuStyle'; // Använder samma stil som Menu
+import styles from './Styles/MenuStyle'; // Using the same style as Menu
 
-const SavedRecipes = ({ onBack }) => {
+const SavedRecipes = ({ navigation }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulerad hämtning av sparade recept (ersätt med faktisk hämtning om nödvändigt)
+    // Simulated fetching of saved recipes (replace with actual fetching if needed)
     const fetchSavedRecipes = async () => {
       try {
         setLoading(true);
         
-        // Här ska du hämta sparade recept från AsyncStorage eller API (exempelvis från lokal lagring)
-        const savedRecipesFromStorage = []; // Byt ut detta mot din faktiska lagringsmetod
+        // Here, you should fetch saved recipes from AsyncStorage or API (e.g., local storage)
+        const savedRecipesFromStorage = []; // Replace this with your actual storage method
         
         if (savedRecipesFromStorage.length > 0) {
           setSavedRecipes(savedRecipesFromStorage);
@@ -54,7 +54,8 @@ const SavedRecipes = ({ onBack }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        {/* Use navigation.goBack() for back navigation */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.heading}>Saved Recipes</Text>
