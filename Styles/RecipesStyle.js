@@ -7,44 +7,46 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   contentBox: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#FAEAB6',
     borderRadius: 8,
     padding: 16,
     elevation: 3,
+    marginTop: 20, // Added margin to separate it from buttons
   },
   recipeContainer: {
     flexDirection: 'row',
     marginBottom: 16,
   },
   recipeImage: {
-    width: 100,
-    height: 100,
+    width: 300, // Set a fixed width for the image
+    height: 300, // Set a fixed height for the image
     borderRadius: 8,
     marginRight: 16,
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Aligns text at the top
   },
   recipeTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
+    marginBottom: 8, // Space between title and other info
   },
   recipeInfo: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#555',
   },
   recipeText: {
-    fontSize: 16,
+    fontSize: 18,
     marginVertical: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 8,
+    marginVertical: 20,
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
     flex: 1,
@@ -52,41 +54,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: 'black',
+    fontSize: 18,
   },
   detailsText: {
     fontSize: 16,
     marginTop: 16,
     color: '#333',
   },
-  backButton: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  text: {
-    color: '#007BFF',
-    fontSize: 16,
-  },
-
-  // Styles for the new top-right buttons
   topRightButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 30,
+    right: 30,
     zIndex: 1,
   },
   topButton: {
-    backgroundColor: '#28A745', // You can choose different colors for each button
+    backgroundColor: '#819171',
     paddingVertical: 10,
     paddingHorizontal: 16,
     marginLeft: 10,
     borderRadius: 5,
   },
   topButtonText: {
-    color: '#fff',
+    color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
   },

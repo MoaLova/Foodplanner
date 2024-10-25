@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SPOONACULAR_API_KEY } from '@env';  // API key
+import { SPOONACULAR_API_KEY } from '@env'; // API key
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import styles from './Styles/MenuStyle';
 
@@ -18,13 +18,16 @@ const Menu = ({ navigation }) => {
       setLoadingMore(pageNumber > 1);
       setError(null);
 
+      console.log(`Fetching recipes with search term: ${searchTerm}, page: ${pageNumber}`);
+
       const response = await fetch(
         `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}&addRecipeInformation=true`
       );
 
       const data = await response.json();
+      console.log('API Response:', data); // Log response to see if data is coming through
 
-      if (data && data.results.length > 0) {
+      if (data && data.results && data.results.length > 0) {
         setRecipes((prevRecipes) => pageNumber === 1 ? data.results : [...prevRecipes, ...data.results]);
         setHasMoreData(data.results.length === 10);
       } else {
@@ -49,9 +52,7 @@ const Menu = ({ navigation }) => {
       );
       const recipeDetails = await response.json();
       
-      // Navigate to the Recipes screen and pass the recipe details as parameters
       navigation.navigate('Recipes', { recipe: recipeDetails });
-
       setLoading(false);
     } catch (error) {
       console.error('Error fetching recipe details:', error);
@@ -61,7 +62,12 @@ const Menu = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchRecipes();
+    if (SPOONACULAR_API_KEY) {
+      fetchRecipes();
+    } else {
+      console.error('API key is missing');
+      setError('Missing API key');
+    }
   }, []);
 
   const renderRecipeItem = ({ item }) => (
@@ -71,13 +77,11 @@ const Menu = ({ navigation }) => {
         <View style={styles.recipeInfo}>
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
-          {/* Display dish types */}
           {item.dishTypes && item.dishTypes.length > 0 && (
             <Text style={styles.recipeDishTypes}>
               Måltidstyper: {item.dishTypes.join(', ')}
             </Text>
           )}
-          {/* Display allergies */}
           {item.diets && item.diets.length > 0 && (
             <Text style={styles.recipeAllergies}>
               Allergies: {item.diets.join(', ')}
@@ -91,9 +95,7 @@ const Menu = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.text}>Back</Text>
-        </TouchableOpacity>
+     
         <Text style={styles.heading}>Menu</Text>
       </View>
 
@@ -102,7 +104,7 @@ const Menu = ({ navigation }) => {
         placeholder="Search for recipes..."
         value={searchTerm}
         onChangeText={setSearchTerm}
-        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Search
+        onSubmitEditing={() => fetchRecipes(1, searchTerm)}
       />
 
       {loading ? (
@@ -125,6 +127,8 @@ const Menu = ({ navigation }) => {
             }
           }}
           onEndReachedThreshold={0.5}
+          ListFooterComponent={loadingMore ? <ActivityIndicator size="small" color="#0000ff" /> : null}
+          style={{ flex: 1 }}
         />
       )}
     </View>
