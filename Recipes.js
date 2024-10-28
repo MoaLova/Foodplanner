@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ErrorBoundary from './ErrorBoundary'; // Import ErrorBoundary
 import styles from './Styles/RecipesStyle';
 
-const Recipes = ({ recipe, setActiveView }) => {
+const Recipes = ({ route, navigation }) => {
+  const { recipe } = route.params; // Get the recipe passed from the Menu
   const [details, setDetails] = useState('');
 
   if (!recipe) {
@@ -55,7 +56,7 @@ const Recipes = ({ recipe, setActiveView }) => {
         {/* Back button */}
         <TouchableOpacity 
           style={styles.backButton} 
-          onPress={() => setActiveView('menu')} // Navigate back to Menu
+          onPress={() => navigation.navigate('Menu')} // Navigate back to Menu
         >
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
