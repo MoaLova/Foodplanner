@@ -7,6 +7,14 @@ import styles from './Styles/RecipesStyle';
 const Recipes = ({ recipe, setActiveView }) => {
   const [details, setDetails] = useState('');
 
+  if (!recipe) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>No recipe selected.</Text>
+      </View>
+    );
+  }
+
   const saveRecipe = async () => {
     try {
       const savedRecipesJson = await AsyncStorage.getItem('savedRecipes');

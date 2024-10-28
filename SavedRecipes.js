@@ -1,11 +1,9 @@
-// SavedRecipes.js
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import styles from './Styles/MenuStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SavedRecipes = ({ setActiveView }) => {  // Use setActiveView instead of navigation
+const SavedRecipes = ({ setActiveView }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,10 +39,12 @@ const SavedRecipes = ({ setActiveView }) => {  // Use setActiveView instead of n
 
   const renderRecipeItem = ({ item }) => (
     <View style={styles.recipeCard}>
-      <Image source={{ uri: item.image }} style={styles.recipeImage} /> 
+      <Image source={{ uri: item.image }} style={styles.recipeImage} />
       <View style={styles.recipeInfo}>
         <TouchableOpacity
-          onPress={() => setActiveView('recipes')}  // Navigate to Recipes screen
+          onPress={() => {
+            setActiveView('recipes', item); // Pass the selected recipe to the Recipes view
+          }}
         >
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
