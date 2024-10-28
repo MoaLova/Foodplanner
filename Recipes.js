@@ -47,7 +47,15 @@ const Recipes = ({ recipe }) => {
 
   return (
     <ErrorBoundary>
-      <ScrollView style={styles.container}>
+  <ScrollView style={styles.container}>
+        {/* Back Button */}
+        <View style={styles.backButtonContainer}>
+          <TouchableOpacity onPress={() => setActiveView('menu')} style={styles.backButton}>
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+        </View>
+
+      
         <View style={styles.topRightButtonsContainer}>
           <TouchableOpacity style={styles.topButton} onPress={saveRecipe}>
             <Text style={styles.topButtonText}>Save Recipe</Text>
