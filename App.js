@@ -1,63 +1,64 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ImageBackground, AppRegistry } from 'react-native';
+import styles from './Styles/AppStyle';  // Import the styles for your app
+import WeeklyMenu from './Weeklymenu';
+import SavedRecipes from './SavedRecipes';
+import Menu from './Menu';
 
 const App = () => {
-  useEffect(() => {
-    console.log('App has mounted');
-  }, []);
+  const [activeView, setActiveView] = useState('home');
 
-  return (
-    <View style={styles.background}>
-      <StatusBar style="light" />
-      <View style={styles.container}>
-        {/* Ensure text is inside Text component */}
-        <View style={styles.box}>
-          <Text style={styles.text}>Recipe</Text>
-        </View>
-        <View style={styles.box}>
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'weeklyMenu':
+        return <WeeklyMenu />;
+      case 'savedRecipes':
+        return <SavedRecipes />;
+      case 'menu':
+        return <Menu />;
+      default:
+        return renderHome();
+    }
+  };
+
+  const renderHome = () => (
+    <View style={styles.overlay}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.heading}>Foodplanner</Text>
+
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('savedRecipes')}
+        >
+          <Text style={styles.text}>Saved Recipes</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('weeklyMenu')}
+        >
           <Text style={styles.text}>Weekly Menu</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Box 3</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Box 4</Text>
-        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => setActiveView('menu')}
+        >
+          <Text style={styles.text}>Menus</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
+
+  return (
+    <ImageBackground
+      source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      {renderActiveView()}
+    </ImageBackground>
+  );
 };
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    backgroundColor: '#90EE90', // Light green color
-    justifyContent: 'center',
-  },
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    padding: 20,
-  },
-  box: {
-    width: 150,
-    height: 150,
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderWidth: 2,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
-
 export default App;
-
-
