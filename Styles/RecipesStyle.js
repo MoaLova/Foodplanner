@@ -83,6 +83,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  backButtonContainer: {
+    marginVertical: 20, // Adjust this to position the button lower
+    marginLeft: 10, // Add some left margin for spacing
+  },
+  backButton: {
+    backgroundColor: '#819171',
+    paddingVertical: 12, // Increase vertical padding for size
+    paddingHorizontal: 20, // Increase horizontal padding for size
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: 'white',
+    fontSize: 18, // Increase font size
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

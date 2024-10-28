@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ErrorBoundary from './ErrorBoundary'; // Import ErrorBoundary
 import styles from './Styles/RecipesStyle';
 
-const Recipes = ({ recipe }) => {
+const Recipes = ({ recipe, setActiveView }) => {
   const [details, setDetails] = useState('');
 
   const saveRecipe = async () => {
@@ -41,26 +41,22 @@ const Recipes = ({ recipe }) => {
     setDetails(`Instructions:\n${instructionsList}`);
   };
 
-  const handleAddToMenuPress = () => {
-    // Implement adding the recipe to the weekly menu here if needed
-  };
-
   return (
     <ErrorBoundary>
-  <ScrollView style={styles.container}>
-        {/* Back Button */}
-        <View style={styles.backButtonContainer}>
-          <TouchableOpacity onPress={() => setActiveView('menu')} style={styles.backButton}>
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
-        </View>
+      <ScrollView style={styles.container}>
+        {/* Back button */}
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => setActiveView('menu')} // Navigate back to Menu
+        >
+          <Text style={styles.backButtonText}>← Back</Text>
+        </TouchableOpacity>
 
-      
         <View style={styles.topRightButtonsContainer}>
           <TouchableOpacity style={styles.topButton} onPress={saveRecipe}>
             <Text style={styles.topButtonText}>Save Recipe</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.topButton} onPress={handleAddToMenuPress}>
+          <TouchableOpacity style={styles.topButton} onPress={() => { /* Add to Menu functionality here */ }}>
             <Text style={styles.topButtonText}>Add to Menu</Text>
           </TouchableOpacity>
         </View>
