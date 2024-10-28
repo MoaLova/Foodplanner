@@ -11,26 +11,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     elevation: 3,
-    marginTop: 20, // Added margin to separate it from buttons
+    marginTop: 20,
   },
   recipeContainer: {
     flexDirection: 'row',
     marginBottom: 16,
+    alignItems: 'flex-start', // Aligns items at the start of the container
   },
   recipeImage: {
-    width: 300, // Set a fixed width for the image
-    height: 300, // Set a fixed height for the image
+    width: 100, // Adjust the width for better responsiveness
+    height: 100, // Adjust the height accordingly
     borderRadius: 8,
     marginRight: 16,
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'flex-start', // Aligns text at the top
+    justifyContent: 'flex-start',
   },
   recipeTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 8, // Space between title and other info
+    marginBottom: 8,
   },
   recipeInfo: {
     fontSize: 18,
@@ -82,6 +83,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  backButtonContainer: {
+    marginVertical: 20, // Adjust this to position the button lower
+    marginLeft: 10, // Add some left margin for spacing
+  },
+  backButton: {
+    backgroundColor: '#819171',
+    paddingVertical: 12, // Increase vertical padding for size
+    paddingHorizontal: 20, // Increase horizontal padding for size
+    borderRadius: 5,
+  },
+  backButtonText: {
+    color: 'white',
+    fontSize: 18, // Increase font size
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
+
