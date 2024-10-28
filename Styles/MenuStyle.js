@@ -100,6 +100,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
+  backButton: {
+    padding: 10,
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+    alignSelf: 'flex-start',
+    margin: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  
+  
 });
 
 export default styles;

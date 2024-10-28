@@ -92,6 +92,11 @@ const Menu = ({ setActiveView, setCurrentRecipe }) => {
   return (
     <ErrorBoundary>
       <View style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity onPress={() => setActiveView('home')} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+
         <View style={styles.headerContainer}>
           <Text style={styles.heading}>Menu</Text>
         </View>
