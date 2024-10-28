@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, ImageBackground } from 'react-native'; 
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import styles from './Styles/AppStyle';
 import WeeklyMenu from './Weeklymenu';
 import SavedRecipes from './SavedRecipes';
@@ -7,65 +9,62 @@ import Menu from './Menu';
 import Recipes from './Recipes';
 import ErrorBoundary from './ErrorBoundary';
 
+const Stack = createNativeStackNavigator();
+
 const App = () => {
-  const [activeView, setActiveView] = useState('home');
   const [currentRecipe, setCurrentRecipe] = useState(null);
-
-  const renderActiveView = () => {
-    switch (activeView) {
-      case 'weeklyMenu':
-        return <WeeklyMenu />;
-      case 'savedRecipes':
-        return (
-          <SavedRecipes 
-            setActiveView={setActiveView} 
-            setCurrentRecipe={setCurrentRecipe} // Pass setCurrentRecipe to SavedRecipes
-          />
-        );
-      case 'menu':
-        return (
-          <ErrorBoundary>
-            <Menu setActiveView={setActiveView} setCurrentRecipe={setCurrentRecipe} />
-          </ErrorBoundary>
-        );
-      case 'recipes':
-        return (
-          <ErrorBoundary>
-            <Recipes recipe={currentRecipe} setActiveView={setActiveView} />
-          </ErrorBoundary>
-        );
-      default:
-        return renderHome();
-    }
-  };
-
-  const renderHome = () => (
-    <View style={styles.overlay}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.heading}>Foodplanner</Text>
-        <TouchableOpacity style={styles.box} onPress={() => setActiveView('savedRecipes')}>
-          <Text style={styles.text}>Saved Recipes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box} onPress={() => setActiveView('weeklyMenu')}>
-          <Text style={styles.text}>Weekly Menu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.box} onPress={() => setActiveView('menu')}>
-          <Text style={styles.text}>Menus</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const [activeView, setActiveView] = useState('');
 
   return (
-    <ImageBackground
-      source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      {renderActiveView()}
-    </ImageBackground>
+    <NavigationContainer>
+      <ImageBackground
+        source={{ uri: 'https://th.bing.com/th/id/OIP.oOmwtQwy26KXIh4LjWJdgwHaE5?rs=1&pid=ImgDetMain' }}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="WeeklyMenu" component={WeeklyMenu} />
+          <Stack.Screen name="SavedRecipes">
+            {props => (
+              <SavedRecipes {...props} setCurrentRecipe={setCurrentRecipe} />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Menu">
+            {props => (
+              <Menu 
+                {...props} 
+                setCurrentRecipe={setCurrentRecipe} 
+                setActiveView={setActiveView}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Recipes">
+            {props => (
+              <Recipes {...props} recipe={currentRecipe} />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </ImageBackground>
+    </NavigationContainer>
   );
 };
 
-export default App;
+const HomeScreen = ({ navigation }) => (
+  <View style={styles.overlay}>
+    <View style={styles.headerContainer}>
+      <Text style={styles.heading}>Foodplanner</Text>
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('SavedRecipes')}>
+        <Text style={styles.text}>Saved Recipes</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('WeeklyMenu')}>
+        <Text style={styles.text}>Weekly Menu</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('Menu')}>
+        <Text style={styles.text}>Menus</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
 
+export default App;

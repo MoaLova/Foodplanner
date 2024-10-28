@@ -4,7 +4,7 @@ import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndic
 import styles from './Styles/MenuStyle';
 import ErrorBoundary from './ErrorBoundary';
 
-const Menu = ({ setActiveView, setCurrentRecipe }) => {
+const Menu = ({ navigation, setCurrentRecipe, setActiveView }) => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -51,7 +51,8 @@ const Menu = ({ setActiveView, setCurrentRecipe }) => {
       
       // Update current recipe and change active view
       setCurrentRecipe(recipeDetails); // Set the current recipe
-      setActiveView('recipes'); // Navigate to Recipes
+      setActiveView('recipes'); // Set the active view to 'recipes' or navigate to Recipes
+      navigation.navigate('Recipes'); // Navigate to Recipes
     } catch (error) {
       console.error('Error fetching recipe details:', error);
       setError('Could not load recipe details.');
@@ -93,7 +94,7 @@ const Menu = ({ setActiveView, setCurrentRecipe }) => {
     <ErrorBoundary>
       <View style={styles.container}>
         {/* Back Button */}
-        <TouchableOpacity onPress={() => setActiveView('home')} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backButton}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
