@@ -84,19 +84,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   backButtonContainer: {
-    marginVertical: 20, // Adjust this to position the button lower
-    marginLeft: 10, // Add some left margin for spacing
+    position: 'absolute', // Position it at the top left
+    top: 40, // Padding from the top to avoid the dropdown bar
+    left: 10, // Left margin for spacing
+    zIndex: 1, // Ensure it’s above other content
   },
   backButton: {
-    backgroundColor: '#819171',
-    paddingVertical: 12, // Increase vertical padding for size
-    paddingHorizontal: 20, // Increase horizontal padding for size
+    backgroundColor: 'transparent', // Transparent background
+    paddingVertical: 5, // Smaller vertical padding
+    paddingHorizontal: 10, // Smaller horizontal padding
     borderRadius: 5,
+    flexDirection: 'row', // Align text and arrow
+    alignItems: 'center', // Center items vertically
   },
   backButtonText: {
-    color: 'white',
-    fontSize: 18, // Increase font size
+    color: 'black', // Black text color
+    fontSize: 16, // Font size for the text
     fontWeight: 'bold',
+    marginRight: 5, // Space between text and arrow
   },
 });
 
