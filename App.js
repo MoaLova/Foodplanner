@@ -19,7 +19,7 @@ const App = () => {
         return (
           <SavedRecipes 
             setActiveView={setActiveView} 
-            setCurrentRecipe={setCurrentRecipe} // Pass setCurrentRecipe to SavedRecipes
+            setCurrentRecipe={setCurrentRecipe} // Pass setCurrentRecipe to SavedRecipes / Comment
           />
         );
       case 'menu':
