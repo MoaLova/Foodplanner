@@ -3,20 +3,23 @@ import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image
 import styles from './Styles/MenuStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SavedRecipes = ({ setActiveView }) => {
+const SavedRecipes = ({ setActiveView, setCurrentRecipe }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log('Fetching saved recipes...'); // Log when fetching starts
     const fetchSavedRecipes = async () => {
       try {
         setLoading(true);
         const savedRecipesFromStorage = await AsyncStorage.getItem('savedRecipes');
         const parsedRecipes = savedRecipesFromStorage ? JSON.parse(savedRecipesFromStorage) : [];
+        console.log('Fetched recipes:', parsedRecipes); // Log fetched recipes
         setSavedRecipes(parsedRecipes);
         setLoading(false);
       } catch (error) {
+        console.error('Error fetching saved recipes:', error); // Log error
         setError('Could not load saved recipes. Please try again later.');
         setLoading(false);
       }
@@ -26,13 +29,15 @@ const SavedRecipes = ({ setActiveView }) => {
   }, []);
 
   const deleteRecipe = async (recipeId) => {
+    console.log(`Attempting to delete recipe with ID: ${recipeId}`); // Log delete attempt
     try {
       const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId);
       await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
+      console.log('Updated recipes after deletion:', updatedRecipes); // Log updated recipes
       setSavedRecipes(updatedRecipes);
       Alert.alert('Recipe deleted!');
     } catch (error) {
-      console.error('Error deleting recipe:', error);
+      console.error('Error deleting recipe:', error); // Log error
       Alert.alert('Failed to delete recipe.');
     }
   };
@@ -43,19 +48,21 @@ const SavedRecipes = ({ setActiveView }) => {
       <View style={styles.recipeInfo}>
         <TouchableOpacity
           onPress={() => {
-            setActiveView('recipes', item); // Pass the selected recipe to the Recipes view
+            console.log(`Selected recipe: ${item.title}`); // Log selected recipe
+            setCurrentRecipe(item); // Set the selected recipe
+            setActiveView('recipes'); // Navigate to Recipes screen
           }}
         >
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
           {item.dishTypes && item.dishTypes.length > 0 && (
             <Text style={styles.recipeDishTypes}>
-              Måltidstyper: {item.dishTypes.join(', ')}
+              Meal Types: {item.dishTypes.join(', ')}
             </Text>
           )}
           {item.diets && item.diets.length > 0 && (
             <Text style={styles.recipeAllergies}>
-              Allergier: {item.diets.join(', ')}
+              Allergies: {item.diets.join(', ')}
             </Text>
           )}
         </TouchableOpacity>
