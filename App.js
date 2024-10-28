@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import styles from './Styles/AppStyle';
@@ -16,7 +18,7 @@ const App = () => {
       case 'weeklyMenu':
         return <WeeklyMenu />;
       case 'savedRecipes':
-        return <SavedRecipes />;
+        return <SavedRecipes setActiveView={setActiveView} />; // Pass setActiveView to SavedRecipes
       case 'menu':
         return (
           <ErrorBoundary>

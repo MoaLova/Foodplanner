@@ -1,15 +1,16 @@
+// SavedRecipes.js
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import styles from './Styles/MenuStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SavedRecipes = ({ navigation }) => {
+const SavedRecipes = ({ setActiveView }) => {  // Use setActiveView instead of navigation
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch saved recipes from AsyncStorage
     const fetchSavedRecipes = async () => {
       try {
         setLoading(true);
@@ -26,12 +27,11 @@ const SavedRecipes = ({ navigation }) => {
     fetchSavedRecipes();
   }, []);
 
-  // Function to delete a recipe
   const deleteRecipe = async (recipeId) => {
     try {
-      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId); // Remove recipe from the list
-      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes)); // Update AsyncStorage
-      setSavedRecipes(updatedRecipes); // Update state
+      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId);
+      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
+      setSavedRecipes(updatedRecipes);
       Alert.alert('Recipe deleted!');
     } catch (error) {
       console.error('Error deleting recipe:', error);
@@ -41,11 +41,10 @@ const SavedRecipes = ({ navigation }) => {
 
   const renderRecipeItem = ({ item }) => (
     <View style={styles.recipeCard}>
-      <Image source={{ uri: item.image }} style={styles.recipeImage} /> {/* Added Image Component */}
-      
+      <Image source={{ uri: item.image }} style={styles.recipeImage} /> 
       <View style={styles.recipeInfo}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Recipes', { recipe: item })} // Navigate to Recipes screen with the clicked recipe
+          onPress={() => setActiveView('recipes')}  // Navigate to Recipes screen
         >
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
@@ -62,10 +61,9 @@ const SavedRecipes = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Delete Button */}
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => deleteRecipe(item.id)} // Call delete function on press
+        onPress={() => deleteRecipe(item.id)}
       >
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
@@ -75,7 +73,7 @@ const SavedRecipes = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => setActiveView('home')} style={styles.backButton}>
           <Text style={styles.text}>Back</Text>
         </TouchableOpacity>
         <Text style={styles.heading}>Saved Recipes</Text>
