@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, Image, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './Styles/RecipesStyle';
 
@@ -62,38 +62,40 @@ const Recipes = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.contentBox}>
-        <View style={styles.recipeContainer}>
-          <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
-          <View style={styles.textContainer}>
-            <Text style={styles.recipeTitle}>{recipe.title}</Text>
-            <Text style={styles.recipeInfo}>{recipe.readyInMinutes} minutes</Text>
-            <Text style={styles.recipeInfo}>
-              Category: {recipe.dishTypes ? recipe.dishTypes.join(', ') : 'Not available'}
-            </Text>
-            <Text style={styles.recipeInfo}>Diet: {recipe.diets ? recipe.diets.join(', ') : 'No specific diet'}</Text>
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.contentBox}>
+          <View style={styles.recipeContainer}>
+            <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+            <View style={styles.textContainer}>
+              <Text style={styles.recipeTitle}>{recipe.title}</Text>
+              <Text style={styles.recipeInfo}>{recipe.readyInMinutes} minutes</Text>
+              <Text style={styles.recipeInfo}>
+                Category: {recipe.dishTypes ? recipe.dishTypes.join(', ') : 'Not available'}
+              </Text>
+              <Text style={styles.recipeInfo}>Diet: {recipe.diets ? recipe.diets.join(', ') : 'No specific diet'}</Text>
+            </View>
           </View>
-        </View>
 
-        <Text style={styles.recipeText}>
-          {recipe.summary.replace(/<[^>]*>?/gm, '') || 'No description available.'}
-        </Text>
+          <Text style={styles.recipeText}>
+            {recipe.summary.replace(/<[^>]*>?/gm, '') || 'No description available.'}
+          </Text>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
-            <Text style={styles.buttonText}>Ingredients</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={changeToIngredients}>
+              <Text style={styles.buttonText}>Ingredients</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={changeToInstructions}>
+              <Text style={styles.buttonText}>Instructions</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.detailsText}>{details || 'Select Ingredients or Instructions to view details.'}</Text>
+
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.text}>Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={changeToInstructions}>
-            <Text style={styles.buttonText}>Instructions</Text>
-          </TouchableOpacity>
         </View>
-
-        <Text style={styles.detailsText}>{details || 'Select Ingredients or Instructions to view details.'}</Text>
-
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.text}>Back</Text>
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 };
