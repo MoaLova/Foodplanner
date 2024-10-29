@@ -1,4 +1,3 @@
-// Menu.js
 import React, { useEffect, useState } from 'react';
 import { SPOONACULAR_API_KEY } from '@env'; 
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
@@ -21,7 +20,7 @@ const Menu = ({ navigation }) => {
       setError(null);
 
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/complexSearch?apiKey=${SPOONACULAR_API_KEY}&number=10&offset=${(pageNumber - 1) * 10}&query=${search}&addRecipeInformation=true`
+        `https://api.spoonacular.com/recipes/complexSearch?apiKey=d7f972357b774c30a67523f78f8a7f29&number=10&offset=${(pageNumber - 1) * 10}&query=${search}&addRecipeInformation=true`
       );
 
       const data = await response.json();
@@ -47,7 +46,7 @@ const Menu = ({ navigation }) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${SPOONACULAR_API_KEY}`
+        `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=d7f972357b774c30a67523f78f8a7f29`
       );
       const recipeDetails = await response.json();
       
