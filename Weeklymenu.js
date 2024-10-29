@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './Styles/WeeklyMenuStyles';
 
 const WeeklyMenu = ({ route, navigation }) => {  
-  const { selectedRecipe } = route.params || {};  // Get the recipe passed from Recipes.js
+  const { selectedRecipe } = route.params || {};  
   const currentMonth = 'January';
   const nextMonth = 'February';
   const [weekNumber, setWeekNumber] = useState(1);
@@ -27,7 +27,6 @@ const WeeklyMenu = ({ route, navigation }) => {
 
   const { start, end, carryOver } = dateRanges[weekNumber - 1];
 
-  // Load saved meals from AsyncStorage on component mount
   useEffect(() => {
     const loadMeals = async () => {
       try {
@@ -43,7 +42,6 @@ const WeeklyMenu = ({ route, navigation }) => {
     loadMeals();
   }, []);
 
-  // Function to handle meal saving to AsyncStorage
   const saveMealsToStorage = async (updatedMeals) => {
     try {
       await AsyncStorage.setItem('mealsPerWeek', JSON.stringify(updatedMeals));
@@ -71,31 +69,27 @@ const WeeklyMenu = ({ route, navigation }) => {
 
   const handleAddMealPress = (mealType) => {
     if (mealsPerWeek[weekNumber] && mealsPerWeek[weekNumber][selectedDay]?.[mealType]) {
-      // If the meal slot is already filled, navigate to Recipes.js with the existing recipe info
       const existingRecipe = mealsPerWeek[weekNumber][selectedDay][mealType];
-      navigation.navigate('Recipes', { recipe: existingRecipe });  // Pass the existing recipe
+      navigation.navigate('Recipes', { recipe: existingRecipe });  
     } else if (!selectedRecipe) {
-      // If no recipe is passed, navigate to the Menu.js to select one
       navigation.navigate('Menu');
     } else if (selectedRecipe && selectedDay) {
-      // Otherwise, proceed with adding the recipe to the selected meal
       const updatedMeals = {
         ...mealsPerWeek,
         [weekNumber]: {
           ...mealsPerWeek[weekNumber],
           [selectedDay]: {
             ...mealsPerWeek[weekNumber][selectedDay],
-            [mealType]: selectedRecipe,  // Assign the passed recipe to the selected meal
+            [mealType]: selectedRecipe,
           },
         },
       };
   
       setMealsPerWeek(updatedMeals);
-      saveMealsToStorage(updatedMeals);  // Save updated meals to AsyncStorage
+      saveMealsToStorage(updatedMeals);
     }
   };
 
-  // Function to delete a meal from the selected day
   const handleDeleteMeal = (mealType) => {
     if (selectedDay && mealsPerWeek[weekNumber] && mealsPerWeek[weekNumber][selectedDay]) {
       const updatedMeals = {
@@ -104,18 +98,18 @@ const WeeklyMenu = ({ route, navigation }) => {
           ...mealsPerWeek[weekNumber],
           [selectedDay]: {
             ...mealsPerWeek[weekNumber][selectedDay],
-            [mealType]: null,  // Remove the selected meal
+            [mealType]: null,
           },
         },
       };
 
       setMealsPerWeek(updatedMeals);
-      saveMealsToStorage(updatedMeals);  // Update AsyncStorage with the deletion
+      saveMealsToStorage(updatedMeals);
     }
   };
 
   const handleBack = () => {
-    navigation.goBack();  // Navigate back to the previous screen
+    navigation.goBack();
   };
 
   return (
@@ -172,7 +166,7 @@ const WeeklyMenu = ({ route, navigation }) => {
                     Diet: {mealsPerWeek[weekNumber][selectedDay].breakfast.diets?.join(', ') || 'No specific diet'}
                   </Text>
                   <TouchableOpacity onPress={() => handleDeleteMeal('breakfast')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
+                    <Text style={styles.deleteButtonText}>Delete</Text>  
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -200,7 +194,7 @@ const WeeklyMenu = ({ route, navigation }) => {
                     Diet: {mealsPerWeek[weekNumber][selectedDay].lunch.diets?.join(', ') || 'No specific diet'}
                   </Text>
                   <TouchableOpacity onPress={() => handleDeleteMeal('lunch')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
+                    <Text style={styles.deleteButtonText}>Delete</Text>  
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -228,7 +222,7 @@ const WeeklyMenu = ({ route, navigation }) => {
                     Diet: {mealsPerWeek[weekNumber][selectedDay].dinner.diets?.join(', ') || 'No specific diet'}
                   </Text>
                   <TouchableOpacity onPress={() => handleDeleteMeal('dinner')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
+                    <Text style={styles.deleteButtonText}>Delete</Text>  
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -238,10 +232,6 @@ const WeeklyMenu = ({ route, navigation }) => {
           </View>
         </View>
       )}
-
-      <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-        <Text style={styles.text}>Back</Text>
-      </TouchableOpacity>
     </View>
   );
 };

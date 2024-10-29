@@ -9,16 +9,15 @@ const SavedRecipes = ({ navigation }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch saved recipes from AsyncStorage
     const fetchSavedRecipes = async () => {
       try {
         setLoading(true);
         const savedRecipesFromStorage = await AsyncStorage.getItem('savedRecipes');
         const parsedRecipes = savedRecipesFromStorage ? JSON.parse(savedRecipesFromStorage) : [];
         setSavedRecipes(parsedRecipes);
-        setLoading(false);
       } catch (error) {
         setError('Could not load saved recipes. Please try again later.');
+      } finally {
         setLoading(false);
       }
     };
@@ -26,12 +25,11 @@ const SavedRecipes = ({ navigation }) => {
     fetchSavedRecipes();
   }, []);
 
-  // Function to delete a recipe
   const deleteRecipe = async (recipeId) => {
     try {
-      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId); // Remove recipe from the list
-      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes)); // Update AsyncStorage
-      setSavedRecipes(updatedRecipes); // Update state
+      const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== recipeId);
+      await AsyncStorage.setItem('savedRecipes', JSON.stringify(updatedRecipes));
+      setSavedRecipes(updatedRecipes);
       Alert.alert('Recipe deleted!');
     } catch (error) {
       console.error('Error deleting recipe:', error);
@@ -41,32 +39,26 @@ const SavedRecipes = ({ navigation }) => {
 
   const renderRecipeItem = ({ item }) => (
     <View style={styles.recipeCard}>
-      <Image source={{ uri: item.image }} style={styles.recipeImage} /> {/* Added Image Component */}
-      
+      <Image source={{ uri: item.image }} style={styles.recipeImage} />
       <View style={styles.recipeInfo}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Recipes', { recipe: item })} // Navigate to Recipes screen with the clicked recipe
-        >
+        <TouchableOpacity onPress={() => navigation.navigate('Recipes', { recipe: item })}>
           <Text style={styles.recipeTitle}>{item.title}</Text>
           <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
-          {item.dishTypes && item.dishTypes.length > 0 && (
-            <Text style={styles.recipeDishTypes}>
-              Måltidstyper: {item.dishTypes.join(', ')}
-            </Text>
-          )}
-          {item.diets && item.diets.length > 0 && (
-            <Text style={styles.recipeAllergies}>
-              Allergier: {item.diets.join(', ')}
-            </Text>
-          )}
+          <Text style={styles.recipeDishTypes}>
+            {item.dishTypes && item.dishTypes.length > 0 ? 
+              `Måltidstyper: ${item.dishTypes.join(', ')}` : 
+              null
+            }
+          </Text>
+          <Text style={styles.recipeAllergies}>
+            {item.diets && item.diets.length > 0 ? 
+              `Allergier: ${item.diets.join(', ')}` : 
+              null
+            }
+          </Text>
         </TouchableOpacity>
       </View>
-
-      {/* Delete Button */}
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => deleteRecipe(item.id)} // Call delete function on press
-      >
+      <TouchableOpacity style={styles.deleteButton} onPress={() => deleteRecipe(item.id)}>
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
     </View>

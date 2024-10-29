@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between', // Use space-between to avoid overlap
     marginBottom: 20,
     width: '100%',
   },
@@ -21,10 +21,10 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: 'black',
-    marginHorizontal: 20,
-    flex: 1,
+    marginHorizontal: 10, // Reduce margin if needed
     textAlign: 'center',
   },
+  
   recipeCard: {
     flexDirection: 'row',
     backgroundColor: '#e0e0e0',

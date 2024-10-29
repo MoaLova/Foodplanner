@@ -1,6 +1,8 @@
+// Menu.js
 import React, { useEffect, useState } from 'react';
-import { SPOONACULAR_API_KEY } from '@env';  // API key
+import { SPOONACULAR_API_KEY } from '@env'; 
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import ErrorBoundary from './ErrorBoundary';
 import styles from './Styles/MenuStyle';
 
 const Menu = ({ navigation }) => {
@@ -49,7 +51,6 @@ const Menu = ({ navigation }) => {
       );
       const recipeDetails = await response.json();
       
-      // Navigate to the Recipes screen and pass the recipe details as parameters
       navigation.navigate('Recipes', { recipe: recipeDetails });
 
       setLoading(false);
@@ -65,69 +66,73 @@ const Menu = ({ navigation }) => {
   }, []);
 
   const renderRecipeItem = ({ item }) => (
-    <TouchableOpacity onPress={() => fetchRecipeDetails(item.id)}>
-      <View style={styles.recipeCard} key={item.id}>
-        <Image source={{ uri: item.image }} style={styles.recipeImage} />
-        <View style={styles.recipeInfo}>
-          <Text style={styles.recipeTitle}>{item.title}</Text>
-          <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
-          {/* Display dish types */}
-          {item.dishTypes && item.dishTypes.length > 0 && (
-            <Text style={styles.recipeDishTypes}>
-              Måltidstyper: {item.dishTypes.join(', ')}
-            </Text>
-          )}
-          {/* Display allergies */}
-          {item.diets && item.diets.length > 0 && (
-            <Text style={styles.recipeAllergies}>
-              Allergies: {item.diets.join(', ')}
-            </Text>
-          )}
+    <ErrorBoundary>
+      <TouchableOpacity onPress={() => fetchRecipeDetails(item.id)}>
+        <View style={styles.recipeCard} key={item.id}>
+          <Image source={{ uri: item.image }} style={styles.recipeImage} />
+          <View style={styles.recipeInfo}>
+            <Text style={styles.recipeTitle}>{item.title}</Text>
+            <Text style={styles.recipeDetails}>{item.readyInMinutes} min</Text>
+            {item.dishTypes && item.dishTypes.length > 0 && (
+              <Text style={styles.recipeDishTypes}>
+                Måltidstyper: {item.dishTypes.join(', ')}
+              </Text>
+            )}
+            {item.diets && item.diets.length > 0 && (
+              <Text style={styles.recipeAllergies}>
+                Allergies: {item.diets.join(', ')}
+              </Text>
+            )}
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </ErrorBoundary>
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.text}>Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.heading}>Menu</Text>
-      </View>
+    <ErrorBoundary>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.text}>Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.heading}>Menu</Text>
+        </View>
 
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search for recipes..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        onSubmitEditing={() => fetchRecipes(1, searchTerm)}  // Search
-      />
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : recipes.length === 0 ? (
-        <Text style={styles.noDataText}>No recipes available. Please try again later.</Text>
-      ) : (
-        <FlatList
-          data={recipes}
-          renderItem={renderRecipeItem}
-          keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={styles.flatListContent}
-          initialNumToRender={3}
-          onEndReached={() => {
-            if (hasMoreData && !loadingMore) {
-              setPage(page + 1);
-              fetchRecipes(page + 1, searchTerm);
-            }
-          }}
-          onEndReachedThreshold={0.5}
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for recipes..."
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          onSubmitEditing={() => fetchRecipes(1, searchTerm)} 
         />
-      )}
-    </View>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : recipes.length === 0 ? (
+          <Text style={styles.noDataText}>No recipes available. Please try again later.</Text>
+        ) : (
+          <ErrorBoundary>
+            <FlatList
+              data={recipes}
+              renderItem={renderRecipeItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.flatListContent}
+              initialNumToRender={3}
+              onEndReached={() => {
+                if (hasMoreData && !loadingMore) {
+                  setPage(page + 1);
+                  fetchRecipes(page + 1, searchTerm);
+                }
+              }}
+              onEndReachedThreshold={0.5}
+            />
+          </ErrorBoundary>
+        )}
+      </View>
+    </ErrorBoundary>
   );
 };
 
