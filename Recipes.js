@@ -64,7 +64,10 @@ const Recipes = ({ recipe, navigation }) => {
           <TouchableOpacity style={styles.topButton} onPress={saveRecipe}>
             <Text style={styles.topButtonText}>Save Recipe</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.topButton} onPress={() => { /* Add to Menu functionality here */ }}>
+          <TouchableOpacity 
+            style={styles.topButton} 
+            onPress={() => navigation.navigate('WeeklyMenu', { selectedRecipe: recipe })}
+          >
             <Text style={styles.topButtonText}>Add to Menu</Text>
           </TouchableOpacity>
         </View>

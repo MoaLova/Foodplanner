@@ -3,10 +3,11 @@ import { Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './Styles/WeeklyMenuStyles';
 
-const WeeklyMenu = ({ route, navigation }) => {  
-  const { selectedRecipe } = route.params || {};  // Get the recipe passed from Recipes.js
+const WeeklyMenu = ({ route, navigation }) => {
+  const { selectedRecipe } = route.params || {};
   const currentMonth = 'January';
   const nextMonth = 'February';
+  
   const [weekNumber, setWeekNumber] = useState(1);
   const [selectedDay, setSelectedDay] = useState(null);
   const [mealsPerWeek, setMealsPerWeek] = useState({
@@ -39,11 +40,10 @@ const WeeklyMenu = ({ route, navigation }) => {
         Alert.alert('Error', 'Failed to load saved meals.');
       }
     };
-
     loadMeals();
   }, []);
 
-  // Function to handle meal saving to AsyncStorage
+  // Save meals to AsyncStorage
   const saveMealsToStorage = async (updatedMeals) => {
     try {
       await AsyncStorage.setItem('mealsPerWeek', JSON.stringify(updatedMeals));
@@ -70,52 +70,48 @@ const WeeklyMenu = ({ route, navigation }) => {
   };
 
   const handleAddMealPress = (mealType) => {
-    if (mealsPerWeek[weekNumber] && mealsPerWeek[weekNumber][selectedDay]?.[mealType]) {
-      // If the meal slot is already filled, navigate to Recipes.js with the existing recipe info
+    if (mealsPerWeek[weekNumber]?.[selectedDay]?.[mealType]) {
       const existingRecipe = mealsPerWeek[weekNumber][selectedDay][mealType];
-      navigation.navigate('Recipes', { recipe: existingRecipe });  // Pass the existing recipe
+      navigation.navigate('Recipes', { recipe: existingRecipe });
     } else if (!selectedRecipe) {
-      // If no recipe is passed, navigate to the Menu.js to select one
-      navigation.navigate('Menu');
+      Alert.alert('No recipe selected. Please select a recipe from the list.');
     } else if (selectedRecipe && selectedDay) {
-      // Otherwise, proceed with adding the recipe to the selected meal
       const updatedMeals = {
         ...mealsPerWeek,
         [weekNumber]: {
           ...mealsPerWeek[weekNumber],
           [selectedDay]: {
             ...mealsPerWeek[weekNumber][selectedDay],
-            [mealType]: selectedRecipe,  // Assign the passed recipe to the selected meal
+            [mealType]: selectedRecipe,
           },
         },
       };
   
       setMealsPerWeek(updatedMeals);
-      saveMealsToStorage(updatedMeals);  // Save updated meals to AsyncStorage
+      saveMealsToStorage(updatedMeals);
     }
   };
 
-  // Function to delete a meal from the selected day
   const handleDeleteMeal = (mealType) => {
-    if (selectedDay && mealsPerWeek[weekNumber] && mealsPerWeek[weekNumber][selectedDay]) {
+    if (selectedDay && mealsPerWeek[weekNumber]?.[selectedDay]) {
       const updatedMeals = {
         ...mealsPerWeek,
         [weekNumber]: {
           ...mealsPerWeek[weekNumber],
           [selectedDay]: {
             ...mealsPerWeek[weekNumber][selectedDay],
-            [mealType]: null,  // Remove the selected meal
+            [mealType]: null,
           },
         },
       };
 
       setMealsPerWeek(updatedMeals);
-      saveMealsToStorage(updatedMeals);  // Update AsyncStorage with the deletion
+      saveMealsToStorage(updatedMeals);
     }
   };
 
   const handleBack = () => {
-    navigation.goBack();  // Navigate back to the previous screen
+    navigation.goBack();
   };
 
   return (
@@ -153,89 +149,34 @@ const WeeklyMenu = ({ route, navigation }) => {
 
       {selectedDay && mealsPerWeek[weekNumber] && (
         <View style={styles.mealContainer}>
-          {/* Breakfast */}
-          <View style={styles.mealColumn}>
-            <Text style={styles.mealText}>Breakfast</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('breakfast')}>
-              {mealsPerWeek[weekNumber][selectedDay]?.breakfast ? (
-                <View style={styles.textContainer}>
-                  <Image 
-                    source={{ uri: mealsPerWeek[weekNumber][selectedDay].breakfast.image }}  
-                    style={styles.recipeImage}  
-                  />
-                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].breakfast.title}</Text>
-                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].breakfast.readyInMinutes} minutes</Text>
-                  <Text style={styles.recipeInfo}>
-                    Category: {mealsPerWeek[weekNumber][selectedDay].breakfast.dishTypes?.join(', ') || 'Not available'}
-                  </Text>
-                  <Text style={styles.recipeInfo}>
-                    Diet: {mealsPerWeek[weekNumber][selectedDay].breakfast.diets?.join(', ') || 'No specific diet'}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleDeleteMeal('breakfast')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <Text style={styles.mealBoxText}>+Add meal</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {/* Lunch */}
-          <View style={styles.mealColumn}>
-            <Text style={styles.mealText}>Lunch</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('lunch')}>
-              {mealsPerWeek[weekNumber][selectedDay]?.lunch ? (
-                <View style={styles.textContainer}>
-                  <Image 
-                    source={{ uri: mealsPerWeek[weekNumber][selectedDay].lunch.image }}  
-                    style={styles.recipeImage}  
-                  />
-                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].lunch.title}</Text>
-                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].lunch.readyInMinutes} minutes</Text>
-                  <Text style={styles.recipeInfo}>
-                    Category: {mealsPerWeek[weekNumber][selectedDay].lunch.dishTypes?.join(', ') || 'Not available'}
-                  </Text>
-                  <Text style={styles.recipeInfo}>
-                    Diet: {mealsPerWeek[weekNumber][selectedDay].lunch.diets?.join(', ') || 'No specific diet'}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleDeleteMeal('lunch')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <Text style={styles.mealBoxText}>+Add meal</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-
-          {/* Dinner */}
-          <View style={styles.mealColumn}>
-            <Text style={styles.mealText}>Dinner</Text>
-            <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress('dinner')}>
-              {mealsPerWeek[weekNumber][selectedDay]?.dinner ? (
-                <View style={styles.textContainer}>
-                  <Image 
-                    source={{ uri: mealsPerWeek[weekNumber][selectedDay].dinner.image }}  
-                    style={styles.recipeImage}  
-                  />
-                  <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay].dinner.title}</Text>
-                  <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay].dinner.readyInMinutes} minutes</Text>
-                  <Text style={styles.recipeInfo}>
-                    Category: {mealsPerWeek[weekNumber][selectedDay].dinner.dishTypes?.join(', ') || 'Not available'}
-                  </Text>
-                  <Text style={styles.recipeInfo}>
-                    Diet: {mealsPerWeek[weekNumber][selectedDay].dinner.diets?.join(', ') || 'No specific diet'}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleDeleteMeal('dinner')} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>  {/* Delete Button */}
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <Text style={styles.mealBoxText}>+Add meal</Text>
-              )}
-            </TouchableOpacity>
-          </View>
+          {['breakfast', 'lunch', 'dinner'].map((mealType) => (
+            <View key={mealType} style={styles.mealColumn}>
+              <Text style={styles.mealText}>{mealType.charAt(0).toUpperCase() + mealType.slice(1)}</Text>
+              <TouchableOpacity style={styles.mealBox} onPress={() => handleAddMealPress(mealType)}>
+                {mealsPerWeek[weekNumber][selectedDay]?.[mealType] ? (
+                  <View style={styles.textContainer}>
+                    <Image 
+                      source={{ uri: mealsPerWeek[weekNumber][selectedDay][mealType].image }}  
+                      style={styles.recipeImage}  
+                    />
+                    <Text style={styles.recipeTitle}>{mealsPerWeek[weekNumber][selectedDay][mealType].title}</Text>
+                    <Text style={styles.recipeInfo}>{mealsPerWeek[weekNumber][selectedDay][mealType].readyInMinutes} minutes</Text>
+                    <Text style={styles.recipeInfo}>
+                      Category: {mealsPerWeek[weekNumber][selectedDay][mealType].dishTypes?.join(', ') || 'Not available'}
+                    </Text>
+                    <Text style={styles.recipeInfo}>
+                      Diet: {mealsPerWeek[weekNumber][selectedDay][mealType].diets?.join(', ') || 'No specific diet'}
+                    </Text>
+                    <TouchableOpacity onPress={() => handleDeleteMeal(mealType)} style={styles.deleteButton}>
+                      <Text style={styles.deleteButtonText}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <Text style={styles.mealBoxText}>+Add meal</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
       )}
 
