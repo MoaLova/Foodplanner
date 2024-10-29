@@ -1,4 +1,3 @@
-// Menu.js
 import React, { useEffect, useState } from 'react';
 import { SPOONACULAR_API_KEY } from '@env'; 
 import { View, TextInput, Text, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
