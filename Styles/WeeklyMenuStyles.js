@@ -54,6 +54,12 @@ const styles = StyleSheet.create({
   mealColumn: {
     marginBottom: 30,
   },
+  recipeImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 16,
+  },
   mealText: {
     fontSize: 22,
     fontWeight: 'bold',
