@@ -8,6 +8,7 @@ import WeeklyMenu from './Weeklymenu';
 import SavedRecipes from './SavedRecipes';
 import Menu from './Menu';
 import Recipes from './Recipes'; // Import the Recipes screen
+import ErrorBoundary from './ErrorBoundary';
 
 const Stack = createNativeStackNavigator();
 

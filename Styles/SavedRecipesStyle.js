@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between', // Use space-between to avoid overlap
     marginBottom: 20,
     width: '100%',
   },
@@ -21,10 +21,10 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: 'black',
-    marginHorizontal: 20,
-    flex: 1,
+    marginHorizontal: 10, // Reduce margin if needed
     textAlign: 'center',
   },
+  
   recipeCard: {
     flexDirection: 'row',
     backgroundColor: '#e0e0e0',
@@ -41,6 +41,12 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 10,
   },
+  recipeImage: {
+    width: 80,  // Anpassa bildens bredd
+    height: 80, // Anpassa bildens höjd
+    borderRadius: 10,
+    marginRight: 10,
+  },
   recipeTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -49,6 +55,18 @@ const styles = StyleSheet.create({
   recipeDetails: {
     fontSize: 14,
     color: '#666',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   flatListContent: {
     paddingBottom: 30,
